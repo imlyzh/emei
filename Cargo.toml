@@ -1,0 +1,16 @@
+[package]
+name = "emei"
+version = "0.1.0"
+edition = "2021"
+description = "The EMei JIT/AOT backend framework."
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+
+
+[target.'cfg(unix)'.dependencies]
+nix = "0.23"
+
+[target.'cfg(windows)'.dependencies]
+winapi = { version = "0.3", features = ["sysinfoapi", "memoryapi"] }
