@@ -7,8 +7,7 @@ use nix::unistd::{sysconf, SysconfVar};
 
 #[cfg(windows)]
 use winapi::ctypes::c_void;
-#[cfg(windows)]
-use winapi::um::{sysinfoapi, winnt, memoryapi};
+
 
 
 #[derive(Debug, Clone, Copy, Eq, PartialEq, Ord, PartialOrd)]
@@ -29,9 +28,19 @@ impl PageSize {
     #[cfg(windows)]
     #[inline]
     pub fn from_system() -> Self {
-        let sysinfo = std::ptr::null_mut();
-        sysinfoapi::GetSystemInfo(sysinfo);
-        let page_size = (*sysinfo).dwPageSize as usize;
+        use std::alloc::{alloc, dealloc, Layout};
+        use winapi::um::sysinfoapi;
+
+        let size = std::mem::size_of::<sysinfoapi::SYSTEM_INFO>();
+        let layout = Layout::from_size_align(size, 8).unwrap();
+        let sysinfo = unsafe { alloc(layout) } as *mut sysinfoapi::SYSTEM_INFO;
+
+        let page_size = unsafe {
+            sysinfoapi::GetSystemInfo(sysinfo);
+            (*sysinfo).dwPageSize as usize
+        };
+
+        unsafe { dealloc(sysinfo as *mut u8, layout); }
         Self(page_size)
     }
 }
@@ -97,6 +106,7 @@ impl PageHandle {
     #[cfg(windows)]
     #[inline]
     pub fn new(size: usize, page_size: PageSize) -> Self {
+        use winapi::um::{winnt, memoryapi};
         unsafe {
             let page_size = page_size.0;
             let size_mod = size % page_size;
@@ -111,7 +121,7 @@ impl PageHandle {
             }
             PageHandle {
                 ptr: ptr as *mut u8,
-                // len: size,
+                len: size,
                 cap: alloc_size,
             }
         }
@@ -131,6 +141,7 @@ impl PageHandle {
     #[cfg(windows)]
     #[inline]
     pub fn make_page_executable(&self) {
+        use winapi::um::{winnt, memoryapi};
         unsafe {
             let mut flag =  winnt::PAGE_READWRITE;
             let r = memoryapi::VirtualProtect(
@@ -158,6 +169,7 @@ impl Drop for PageHandle {
     #[cfg(windows)]
     #[inline]
     fn drop(&mut self) {
+        use winapi::um::{winnt, memoryapi};
         unsafe {
             memoryapi::VirtualFree(
                 self.ptr as *mut c_void,
