@@ -14,10 +14,6 @@ use winapi::ctypes::c_void;
 pub struct PageSize(pub usize);
 
 impl PageSize {
-    pub const fn from(size: usize) -> Self {
-        Self(size)
-    }
-
     #[cfg(unix)]
     #[inline]
     pub fn from_system() -> Self {
