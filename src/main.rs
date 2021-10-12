@@ -1,4 +1,5 @@
 mod page_manage;
+mod insts;
 
 use page_manage::*;
 

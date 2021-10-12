@@ -7,7 +7,7 @@ description = "The EMei JIT/AOT backend framework."
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-
+lazy_static = "1.4"
 
 [target.'cfg(unix)'.dependencies]
 nix = "0.23"
