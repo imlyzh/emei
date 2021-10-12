@@ -1,6 +1,6 @@
 # emei
 
-The EMei JIT/AOT backend framework.
+The 峨眉 (EMei) JIT/AOT backend framework.
 
 ## Support Instructions
 
