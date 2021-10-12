@@ -7,9 +7,17 @@ The EMei JIT/AOT backend framework.
 ### x86_64
 
 - mov
-- mov_rev
-- movs(is movsq)
-- push_all pusha/pushad
+  - mov
+  - mov_rev
+  - movs(is movsq)
+- push
+  - push_reg
+  - push_imm
+  - push_all pusha/pushad
+
+- add
+  - add_to_eax
+  - 
 
 ## Example
 

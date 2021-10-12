@@ -51,6 +51,8 @@ impl Operator1 {
 
 #[derive(Debug, Clone, Copy)]
 pub enum ImmByte {
+    Bit8,
+    Bit16,
     Bit32,
     Bit64,
 }
@@ -105,23 +107,28 @@ impl Inst {
         } else {
             self.opcode
         };
-        /*
-        if let (Some(_), Some(_)) = (self.op1, self.op2) {
-            panic!("Instruction with immediate operand cannot have a second operand");
-        }
-        // */
         if let Operator2::Imm(imm, imm_byte) = self.op2.unwrap() {
-            let imm = if let ImmByte::Bit32 = imm_byte {
+            let imm = if let ImmByte::Bit8 = imm_byte {
+                (imm as u8).to_ne_bytes().to_vec()
+            } else if let ImmByte::Bit16 = imm_byte {
+                (imm as u16).to_ne_bytes().to_vec()
+            } else if let ImmByte::Bit32 = imm_byte {
                 (imm as u32).to_ne_bytes().to_vec()
             } else {
                 imm.to_ne_bytes().to_vec()
             };
+            let (mod_rm, sib, disp) = if let Some(x) = self.op1 {
+                let (mod_rm, sib, disp) = x.to_modrm_sib_disp(TargetReg::from(0));
+                (Some(mod_rm), sib, disp)
+            } else {
+                (None, None, vec![])
+            };
             RawInst {
                 prefixes,
                 opcode,
-                modrm: None,
-                sib: None,
-                disp: vec![],
+                modrm: mod_rm,
+                sib: sib,
+                disp,
                 imm,
             }
         } else {

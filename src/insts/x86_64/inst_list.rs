@@ -70,13 +70,89 @@ pub fn imm_sign_extend_into_reg(
 }
 
 ///  movs == movsq
-pub fn movs(
-    atomic: bool,
-    long_mode: bool) -> Vec<u8> {
-    Inst::new(atomic, long_mode,&[0xa5]).into_raw().encode()
+pub fn movs(atomic: bool) -> Vec<u8> {
+    Inst::new(atomic, false,&[0xa5]).into_raw().encode()
 }
 
 /// ## push
-pub fn push_all(atomic: bool, long_mode: bool) -> Vec<u8> {
-    Inst::new(atomic, long_mode,&[0x60]).into_raw().encode()
+///
+/// - push reg
+pub fn push_reg(atomic: bool, reg: TargetReg) -> Vec<u8> {
+    Inst {
+        atomic,
+        long_mode: false,
+        opcode: vec![0x60],
+        op1: None,
+        op2: Some(Operator2::Imm(reg as u64, ImmByte::Bit8)),
+    }.into_raw().encode()
+}
+
+/// - push_imm
+pub fn push_imm(atomic: bool, imm: u32) -> Vec<u8> {
+    Inst {
+        atomic,
+        long_mode: false,
+        opcode: vec![0x60],
+        op1: None,
+        op2: Some(Operator2::Imm(imm as u64, ImmByte::Bit32)),
+    }.into_raw().encode()
+}
+
+/// - push_all
+pub fn push_all(atomic: bool) -> Vec<u8> {
+    Inst::new(atomic, false,&[0x60]).into_raw().encode()
+}
+
+/// ## add
+/// - add_to_eax(rax)
+
+pub fn add_imm32_to_first_reg(atomic: bool, long_mode: bool, imm: u32) -> Vec<u8> {
+    Inst {
+        atomic,
+        long_mode,
+        opcode: vec![0x05],
+        op1: None,
+        op2: Some(Operator2::Imm(imm as u64, ImmByte::Bit32)),
+    }.into_raw().encode()
+}
+
+pub fn add_imm32(atomic: bool, long_mode: bool, op1: Operator1, imm: u32) -> Vec<u8> {
+    Inst {
+        atomic,
+        long_mode,
+        opcode: vec![0x81],
+        op1: Some(op1),
+        op2: Some(Operator2::Imm(imm as u64, ImmByte::Bit32)),
+    }.into_raw().encode()
+}
+
+pub fn add_imm8(atomic: bool, long_mode: bool, op1: Operator1, imm: u8) -> Vec<u8> {
+    Inst {
+        atomic,
+        long_mode,
+        opcode: vec![0x83],
+        op1: Some(op1),
+        op2: Some(Operator2::Imm(imm as u64, ImmByte::Bit8)),
+    }.into_raw().encode()
+}
+
+pub fn add(atomic: bool, long_mode: bool, op1: Operator1, op2: TargetReg) -> Vec<u8> {
+    Inst {
+        atomic,
+        long_mode,
+        opcode: vec![0x01],
+        op1: Some(op1),
+        op2: Some(Operator2::Register(op2)),
+    }.into_raw().encode()
+}
+
+/// - add_rev: add_rev is the same as add, but the source and destination operands are reversed.
+pub fn add_rev(atomic: bool, long_mode: bool, op1: Operator1, op2: TargetReg) -> Vec<u8> {
+    Inst {
+        atomic,
+        long_mode,
+        opcode: vec![0x03],
+        op1: Some(op1),
+        op2: Some(Operator2::Register(op2)),
+    }.into_raw().encode()
 }

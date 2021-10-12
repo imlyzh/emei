@@ -100,6 +100,7 @@ pub fn sib(base: TargetReg, scale: ScaledIndex, index: TargetReg) -> u8 {
     let r = r + ((scale as u8) << 6u8);
     r
 }
+
 impl AddrMode {
     pub fn encode_disp(&self, disp: usize) -> Vec<u8> {
         let mut r = Vec::new();
