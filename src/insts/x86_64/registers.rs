@@ -28,10 +28,37 @@ macro_rules! make_register_enum {
 make_register_enum!(Register8, AL, CL, DL, BL, AH, CH, DH, BH);
 make_register_enum!(Register16, AX, CX, DX, BX, SP, BP, SI, DI);
 make_register_enum!(Register32, EAX, ECX, EDX, EBX, ESP, EBP, ESI, EDI);
-#[cfg(target_arch="x86_64")]
-make_register_enum!(Register64, RAX, RCX, RDX, RBX, RSP, RBP, RSI, RDI);
 make_register_enum!(RegisterMme, MM0, MM1, MM2, MM3, MM4, MM5, MM6, MM7);
 make_register_enum!(RegisterXmm, XMM0, XMM1, XMM2, XMM3, XMM4, XMM5, XMM6, XMM7);
+
+#[cfg(target_arch="x86_64")]
+#[repr(u8)] // 4bit
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub enum Register64 {
+    RAX = 0,
+    RCX = 1,
+    RDX = 2,
+    RBX = 3,
+    RSP = 4,
+    RBP = 5,
+    RSI = 6,
+    RDI = 7,
+    R8 = 8,
+    R9 = 9,
+    R10 = 10,
+    R11 = 11,
+    R12 = 12,
+    R13 = 13,
+    R14 = 14,
+    R15 = 15,
+}
+#[cfg(target_arch="x86_64")]
+impl From<u8> for Register64 {
+    fn from(i: u8) -> Self {
+        assert!(i <= 15, "Register64::from(u8): i must be <= 15");
+        unsafe { std::mem::transmute_copy(&i) }
+    }
+}
 
 
 #[repr(u8)] // 4bit
@@ -43,8 +70,6 @@ pub enum AddrMode {
     Direct  = 3,
 }
 
-
-pub type Digit = u8;
 #[cfg(target_arch="x86")]
 pub type TargetReg = Register32;
 #[cfg(target_arch="x86_64")]

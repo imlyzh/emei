@@ -3,7 +3,7 @@ pub mod inst_list;
 
 use std::panic;
 
-use registers::{ScaledIndex, TargetReg, AddrMode, Digit, APPEND_SIB, modrm};
+use registers::{ScaledIndex, TargetReg, AddrMode, APPEND_SIB, modrm};
 
 use self::registers::sib;
 
