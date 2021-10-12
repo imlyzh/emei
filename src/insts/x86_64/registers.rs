@@ -45,10 +45,10 @@ pub enum AddrMode {
 
 
 pub type Digit = u8;
-// #[cfg(target_arch="x86")]
+#[cfg(target_arch="x86")]
 pub type TargetReg = Register32;
 #[cfg(target_arch="x86_64")]
-// pub type AddressRegister = Register64;
+pub type TargetReg = Register64;
 
 lazy_static! {
     pub static ref APPEND_SIB: TargetReg = unsafe { std::mem::transmute_copy(&4u8) };
@@ -79,20 +79,22 @@ pub enum ScaledIndex {
 #[derive(Debug, Clone, Copy)]
 pub struct SibInvalidError();
 
+/*
 #[inline]
 fn sib_check(base: &TargetReg, index: &TargetReg) -> Result<(), SibInvalidError> {
-    if let TargetReg::EBP = base {
+    if 5 as u8 == *base as u8 {
         return Err(SibInvalidError());
     }
-    if let TargetReg::ESP = index {
+    if 4 as u8 == *index as u8 {
         return Err(SibInvalidError());
     }
     Ok(())
 }
+*/
 
 #[inline]
 pub fn sib(base: TargetReg, scale: ScaledIndex, index: TargetReg) -> u8 {
-    sib_check(&base, &index).unwrap();
+    // sib_check(&base, &index).unwrap();
     let r = base as u8;
     let r = r + ((index as u8) << 3u8);
     let r = r + ((scale as u8) << 6u8);

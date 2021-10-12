@@ -71,22 +71,34 @@ impl Operator2 {
 }
 
 pub struct Inst {
-    pub is_atomic: bool,
-    pub is_long_mode: bool,
+    pub atomic: bool,
+    pub long_mode: bool,
     pub opcode: Vec<u8>, // 0~2bytes
     pub op1: Option<Operator1>,
     pub op2: Option<Operator2>,
 }
 
 impl Inst {
+    pub fn new(atomic: bool, long_mode: bool, opcode: &[u8]) -> Self {
+        Inst {
+            atomic,
+            long_mode,
+            opcode: opcode.to_vec(),
+            op1: None,
+            op2: None,
+        }
+    }
+}
+
+impl Inst {
     #[inline]
     fn into_raw(self) -> RawInst {
-        let prefixes = if self.is_atomic {
+        let prefixes = if self.atomic {
             vec![PREFIX_LOCK]
         } else {
             vec![]
         };
-        let opcode = if self.is_long_mode {
+        let opcode = if self.long_mode {
             let mut r = vec![PREFIX_LONG_MODE];
             r.extend(self.opcode);
             r
