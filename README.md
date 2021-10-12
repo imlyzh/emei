@@ -17,7 +17,13 @@ The EMei JIT/AOT backend framework.
 
 - add
   - add_to_eax
-  - 
+  - add_imm8
+  - add_imm32
+  - add
+
+- ret
+  - near_ret/near_ret_imm
+  - far_ret/far_ret_imm
 
 ## Example
 

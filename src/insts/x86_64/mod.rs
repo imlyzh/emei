@@ -57,6 +57,20 @@ pub enum ImmByte {
     Bit64,
 }
 
+impl ImmByte {
+    pub fn encode(self, imm: u64) -> Vec<u8> {
+        if let ImmByte::Bit8 = self {
+            (imm as u8).to_ne_bytes().to_vec()
+        } else if let ImmByte::Bit16 = self {
+            (imm as u16).to_ne_bytes().to_vec()
+        } else if let ImmByte::Bit32 = self {
+            (imm as u32).to_ne_bytes().to_vec()
+        } else {
+            imm.to_ne_bytes().to_vec()
+        }
+    }
+}
+
 #[derive(Debug, Clone, Copy)]
 pub enum Operator2 {
     Imm(u64, ImmByte),
@@ -107,41 +121,33 @@ impl Inst {
         } else {
             self.opcode
         };
-        if let Operator2::Imm(imm, imm_byte) = self.op2.unwrap() {
-            let imm = if let ImmByte::Bit8 = imm_byte {
-                (imm as u8).to_ne_bytes().to_vec()
-            } else if let ImmByte::Bit16 = imm_byte {
-                (imm as u16).to_ne_bytes().to_vec()
-            } else if let ImmByte::Bit32 = imm_byte {
-                (imm as u32).to_ne_bytes().to_vec()
-            } else {
-                imm.to_ne_bytes().to_vec()
-            };
-            let (mod_rm, sib, disp) = if let Some(x) = self.op1 {
-                let (mod_rm, sib, disp) = x.to_modrm_sib_disp(TargetReg::from(0));
-                (Some(mod_rm), sib, disp)
-            } else {
-                (None, None, vec![])
-            };
-            RawInst {
-                prefixes,
-                opcode,
-                modrm: mod_rm,
-                sib: sib,
-                disp,
-                imm,
-            }
-        } else {
-            let op2 = self.op2.unwrap().get_register().unwrap();
-            let (mod_rm, sib, disp) = self.op1.unwrap().to_modrm_sib_disp(op2);
-            RawInst {
-                prefixes,
-                opcode,
-                modrm: Some(mod_rm),
-                sib: sib,
-                disp: disp,
-                imm: vec![],
-            }
+        let (mod_rm, sib, disp, imm) = match (self.op1, self.op2) {
+            (None, None) =>
+                (None, None, vec![], vec![]),
+            (None, Some(Operator2::Imm(value, imm_byte))) =>
+                (None, None, vec![], imm_byte.encode(value)),
+            (None, Some(Operator2::Register(op2))) =>
+                (None, None, vec![], vec![op2 as u8]),
+            (Some(op1), None) => {
+                let (mod_rm, sib, disp) = op1.to_modrm_sib_disp(TargetReg::from(0));
+                (Some(mod_rm), sib, disp, vec![])
+            },
+            (Some(op1), Some(Operator2::Register(op2))) => {
+                let (mod_rm, sib, disp) = op1.to_modrm_sib_disp(op2);
+                (Some(mod_rm), sib, disp, vec![])
+            },
+            (Some(op1), Some(Operator2::Imm(value, imm_byte))) => {
+                let (mod_rm, sib, disp) = op1.to_modrm_sib_disp(TargetReg::from(0));
+                (Some(mod_rm), sib, disp, imm_byte.encode(value))
+            },
+        };
+        RawInst {
+            prefixes,
+            opcode,
+            modrm: mod_rm,
+            sib: sib,
+            disp,
+            imm,
         }
     }
 }

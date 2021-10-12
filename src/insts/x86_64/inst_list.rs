@@ -156,3 +156,33 @@ pub fn add_rev(atomic: bool, long_mode: bool, op1: Operator1, op2: TargetReg) ->
         op2: Some(Operator2::Register(op2)),
     }.into_raw().encode()
 }
+
+/// ## ret
+
+pub fn near_ret() -> Vec<u8> {
+    Inst::new(false, false,&[0xc3]).into_raw().encode()
+}
+
+pub fn far_ret() -> Vec<u8> {
+    Inst::new(false, false,&[0xcb]).into_raw().encode()
+}
+
+pub fn near_ret_imm16(imm: u16) -> Vec<u8> {
+    Inst {
+        atomic: false,
+        long_mode: false,
+        opcode: vec![0xc2],
+        op1: None,
+        op2: Some(Operator2::Imm(imm as u64, ImmByte::Bit16)),
+    }.into_raw().encode()
+}
+
+pub fn far_ret_imm16(imm: u16) -> Vec<u8> {
+    Inst {
+        atomic: false,
+        long_mode: false,
+        opcode: vec![0xca],
+        op1: None,
+        op2: Some(Operator2::Imm(imm as u64, ImmByte::Bit16)),
+    }.into_raw().encode()
+}
