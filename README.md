@@ -33,9 +33,8 @@ The 峨眉 (EMei) JIT/AOT backend framework.
   - dec_reg32
 
 - nop
-  - nop1
-  - nop3/4/5/7
-  - nop_multi_reg
+  - nop(nop1)
+  - nop1-9
 
 - ret
   - near_ret/near_ret_imm

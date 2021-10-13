@@ -305,6 +305,11 @@ pub fn dec_reg32(
 
 // ## nop
 
+#[inline]
+pub fn nop() -> Vec<u8> {
+    nop1()
+}
+
 pub fn nop1() -> Vec<u8> {
     let r = Inst {
         atomic: false,
@@ -316,6 +321,20 @@ pub fn nop1() -> Vec<u8> {
     .into_raw()
     .encode();
     debug_assert_eq!(dbg!(r.len()), 1);
+    r
+}
+
+pub fn nop2() -> Vec<u8> {
+    let r = Inst {
+        atomic: false,
+        long_mode: false,
+        opcode: vec![66, 0x90],
+        op1: None,
+        op2: None,
+    }
+    .into_raw()
+    .encode();
+    debug_assert_eq!(dbg!(r.len()), 2);
     r
 }
 
@@ -331,9 +350,49 @@ pub fn nop4() -> Vec<u8> {
     r
 }
 
+pub fn nop5() -> Vec<u8> {
+    let r = nop_multi_reg(Operator1::ScaleBase(TargetReg::from(0), TargetReg::from(0), ScaledIndex::Id, u8::MAX as usize));
+    debug_assert_eq!(r.len(), 5);
+    r
+}
+
+pub fn nop6() -> Vec<u8> {
+    let r = Inst {
+        atomic: false,
+        long_mode: false,
+        opcode: vec![66, 0x0f, 0x1f],
+        op1: Some(Operator1::ScaleBase(TargetReg::from(0), TargetReg::from(0), ScaledIndex::Id, u8::MAX as usize)),
+        op2: None,
+    }
+    .into_raw()
+    .encode();
+    debug_assert_eq!(dbg!(r.len()), 6);
+    r
+}
+
 pub fn nop7() -> Vec<u8> {
     let r = nop_multi_reg(Operator1::DeRef(TargetReg::from(0), u32::MAX as usize));
     debug_assert_eq!(r.len(), 7);
+    r
+}
+
+pub fn nop8() -> Vec<u8> {
+    let r = nop_multi_reg(Operator1::ScaleBase(TargetReg::from(0), TargetReg::from(0), ScaledIndex::Id, u32::MAX as usize));
+    debug_assert_eq!(r.len(), 8);
+    r
+}
+
+pub fn nop9() -> Vec<u8> {
+    let r = Inst {
+        atomic: false,
+        long_mode: false,
+        opcode: vec![66, 0x0f, 0x1f],
+        op1: Some(Operator1::ScaleBase(TargetReg::from(0), TargetReg::from(0), ScaledIndex::Id, u32::MAX as usize)),
+        op2: None,
+    }
+    .into_raw()
+    .encode();
+    debug_assert_eq!(dbg!(r.len()), 9);
     r
 }
 

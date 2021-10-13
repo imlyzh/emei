@@ -17,7 +17,7 @@ type Sib = u8;
 pub enum Operator1 {
     Direct(TargetReg),
     DeRef(TargetReg, usize),
-    ScaleBase(TargetReg, TargetReg, ScaledIndex),
+    ScaleBase(TargetReg, TargetReg, ScaledIndex, usize),
 }
 
 fn usize_boxed_length(u: usize) -> AddrMode {
@@ -44,11 +44,14 @@ impl Operator1 {
                     addr_mode.encode_disp(disp),
                 )
             }
-            Operator1::ScaleBase(base, index, scale) => (
-                modrm(AddrMode::RegRef, *APPEND_SIB, src_reg),
-                Some(sib(base, scale, index)),
-                vec![],
-            ),
+            Operator1::ScaleBase(base, index, scale, disp) => {
+                let addr_mode = usize_boxed_length(disp);
+                (
+                    modrm(addr_mode, *APPEND_SIB, src_reg),
+                    Some(sib(base, scale, index)),
+                    addr_mode.encode_disp(disp),
+                )
+            },
         }
     }
 }

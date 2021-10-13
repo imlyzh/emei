@@ -6,7 +6,12 @@ pub mod insts;
 fn nop_length_test() {
     use insts::x86_64::inst_list::*;
     nop1();
+    nop2();
     nop3();
     nop4();
+    nop5();
+    nop6();
     nop7();
+    nop8();
+    nop9();
 }
