@@ -8,6 +8,8 @@ The 峨眉 (EMei) JIT/AOT backend framework.
 
 - mov
   - mov
+  - mov_zero_extend_bit8/16
+  - mov_sign_extend_bit8/16/32
   - mov_rev
   - movs(is movsq)
 - push

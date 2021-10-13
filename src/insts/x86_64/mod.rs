@@ -14,7 +14,7 @@ type ModRM = u8;
 type Sib = u8;
 
 #[derive(Debug, Clone, Copy)]
-pub enum Operator1 {
+pub enum Op1 {
     Direct(TargetReg),
     DeRef(TargetReg, usize),
     ScaleBase(TargetReg, TargetReg, ScaledIndex, usize),
@@ -32,11 +32,11 @@ fn usize_boxed_length(u: usize) -> AddrMode {
     }
 }
 
-impl Operator1 {
+impl Op1 {
     pub fn to_modrm_sib_disp(self, src_reg: TargetReg) -> (ModRM, Option<Sib>, Vec<u8>) {
         match self {
-            Operator1::Direct(reg) => (modrm(AddrMode::Direct, reg, src_reg), None, vec![]),
-            Operator1::DeRef(reg, disp) => {
+            Op1::Direct(reg) => (modrm(AddrMode::Direct, reg, src_reg), None, vec![]),
+            Op1::DeRef(reg, disp) => {
                 let addr_mode = usize_boxed_length(disp);
                 (
                     modrm(addr_mode, reg, src_reg),
@@ -44,7 +44,7 @@ impl Operator1 {
                     addr_mode.encode_disp(disp),
                 )
             }
-            Operator1::ScaleBase(base, index, scale, disp) => {
+            Op1::ScaleBase(base, index, scale, disp) => {
                 let addr_mode = usize_boxed_length(disp);
                 (
                     modrm(addr_mode, *APPEND_SIB, src_reg),
@@ -79,17 +79,17 @@ impl ImmByte {
 }
 
 #[derive(Debug, Clone, Copy)]
-pub enum Operator2 {
+pub enum Op2 {
     Imm(u64, ImmByte),
-    Register(TargetReg),
+    Reg(TargetReg),
 }
 
 pub struct Inst {
     pub atomic: bool,
     pub long_mode: bool,
     pub opcode: Vec<u8>, // 0~2bytes
-    pub op1: Option<Operator1>,
-    pub op2: Option<Operator2>,
+    pub op1: Option<Op1>,
+    pub op2: Option<Op2>,
 }
 
 impl Inst {
@@ -121,19 +121,19 @@ impl Inst {
         };
         let (mod_rm, sib, disp, imm) = match (self.op1, self.op2) {
             (None, None) => (None, None, vec![], vec![]),
-            (None, Some(Operator2::Imm(value, imm_byte))) => {
+            (None, Some(Op2::Imm(value, imm_byte))) => {
                 (None, None, vec![], imm_byte.encode(value))
             }
-            (None, Some(Operator2::Register(op2))) => (None, None, vec![], vec![op2 as u8]),
+            (None, Some(Op2::Reg(op2))) => (None, None, vec![], vec![op2 as u8]),
             (Some(op1), None) => {
                 let (mod_rm, sib, disp) = op1.to_modrm_sib_disp(TargetReg::from(0));
                 (Some(mod_rm), sib, disp, vec![])
             }
-            (Some(op1), Some(Operator2::Register(op2))) => {
+            (Some(op1), Some(Op2::Reg(op2))) => {
                 let (mod_rm, sib, disp) = op1.to_modrm_sib_disp(op2);
                 (Some(mod_rm), sib, disp, vec![])
             }
-            (Some(op1), Some(Operator2::Imm(value, imm_byte))) => {
+            (Some(op1), Some(Op2::Imm(value, imm_byte))) => {
                 let (mod_rm, sib, disp) = op1.to_modrm_sib_disp(TargetReg::from(0));
                 (Some(mod_rm), sib, disp, imm_byte.encode(value))
             }

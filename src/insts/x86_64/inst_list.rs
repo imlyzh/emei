@@ -1,16 +1,96 @@
 use crate::insts::x86_64::ImmByte;
 
-use super::{registers::*, Inst, Operator1, Operator2};
+use super::{registers::*, Inst, Op1, Op2};
 
 /// ## mov
 /// - mov
-pub fn mov(is_atomic: bool, is_long_mode: bool, op1: Operator1, op2: TargetReg) -> Vec<u8> {
+pub fn mov(is_atomic: bool, is_long_mode: bool, op1: Op1, op2: TargetReg) -> Vec<u8> {
     Inst {
         atomic: is_atomic,
         long_mode: is_long_mode,
         opcode: vec![0x89],
         op1: Some(op1),
-        op2: Some(Operator2::Register(op2)),
+        op2: Some(Op2::Reg(op2)),
+    }
+    .into_raw()
+    .encode()
+}
+
+pub fn mov_zero_extend_bit8(
+    is_atomic: bool,
+    is_long_mode: bool,
+    op1: Op1,
+    op2: TargetReg) -> Vec<u8> {
+    Inst {
+        atomic: is_atomic,
+        long_mode: is_long_mode,
+        opcode: vec![0x0f, 0xb6],
+        op1: Some(op1),
+        op2: Some(Op2::Reg(op2)),
+    }
+    .into_raw()
+    .encode()
+}
+
+pub fn mov_zero_extend_bit16(
+    is_atomic: bool,
+    is_long_mode: bool,
+    op1: Op1,
+    op2: TargetReg) -> Vec<u8> {
+    Inst {
+        atomic: is_atomic,
+        long_mode: is_long_mode,
+        opcode: vec![0x0f, 0xb7],
+        op1: Some(op1),
+        op2: Some(Op2::Reg(op2)),
+    }
+    .into_raw()
+    .encode()
+}
+
+pub fn mov_sign_extend_bit8(
+    is_atomic: bool,
+    is_long_mode: bool,
+    op1: Op1,
+    op2: TargetReg) -> Vec<u8> {
+    Inst {
+        atomic: is_atomic,
+        long_mode: is_long_mode,
+        opcode: vec![0x0f, 0xbe],
+        op1: Some(op1),
+        op2: Some(Op2::Reg(op2)),
+    }
+    .into_raw()
+    .encode()
+}
+
+pub fn mov_sign_extend_bit16(
+    is_atomic: bool,
+    is_long_mode: bool,
+    op1: Op1,
+    op2: TargetReg) -> Vec<u8> {
+    Inst {
+        atomic: is_atomic,
+        long_mode: is_long_mode,
+        opcode: vec![0x0f, 0xbf],
+        op1: Some(op1),
+        op2: Some(Op2::Reg(op2)),
+    }
+    .into_raw()
+    .encode()
+}
+
+pub fn mov_sign_extend_bit32(
+    is_atomic: bool,
+    is_long_mode: bool,
+    op1: Op1,
+    op2: TargetReg) -> Vec<u8> {
+    Inst {
+        atomic: is_atomic,
+        long_mode: is_long_mode,
+        opcode: vec![0x63],
+        op1: Some(op1),
+        op2: Some(Op2::Reg(op2)),
     }
     .into_raw()
     .encode()
@@ -18,18 +98,19 @@ pub fn mov(is_atomic: bool, is_long_mode: bool, op1: Operator1, op2: TargetReg) 
 
 /// - mov_rev
 /// mov_rev is the same as mov, but the source and destination operands are reversed.
-pub fn mov_rev(is_atomic: bool, is_long_mode: bool, op1: Operator1, op2: TargetReg) -> Vec<u8> {
+pub fn mov_rev(is_atomic: bool, is_long_mode: bool, op1: Op1, op2: TargetReg) -> Vec<u8> {
     Inst {
         atomic: is_atomic,
         long_mode: is_long_mode,
         opcode: vec![0x8b],
         op1: Some(op1),
-        op2: Some(Operator2::Register(op2)),
+        op2: Some(Op2::Reg(op2)),
     }
     .into_raw()
     .encode()
 }
 
+/// - mov_imm[16/32/64(long_mode)]_into_reg
 pub fn mov_imm_into_reg(is_atomic: bool, is_long_mode: bool, op1: TargetReg, op2: u64) -> Vec<u8> {
     let imm_byte = if is_long_mode {
         ImmByte::Bit64
@@ -39,9 +120,9 @@ pub fn mov_imm_into_reg(is_atomic: bool, is_long_mode: bool, op1: TargetReg, op2
     Inst {
         atomic: is_atomic,
         long_mode: is_long_mode,
-        opcode: vec![0x8b],
-        op1: Some(Operator1::Direct(op1)),
-        op2: Some(Operator2::Imm(op2, imm_byte)),
+        opcode: vec![0xb8],
+        op1: Some(Op1::Direct(op1)),
+        op2: Some(Op2::Imm(op2, imm_byte)),
     }
     .into_raw()
     .encode()
@@ -57,8 +138,8 @@ pub fn imm_sign_extend_into_reg(
         atomic: is_atomic,
         long_mode: is_long_mode,
         opcode: vec![0x7c],
-        op1: Some(Operator1::Direct(op1)),
-        op2: Some(Operator2::Imm(op2, ImmByte::Bit32)),
+        op1: Some(Op1::Direct(op1)),
+        op2: Some(Op2::Imm(op2, ImmByte::Bit32)),
     }
     .into_raw()
     .encode()
@@ -78,7 +159,7 @@ pub fn push_reg(atomic: bool, reg: TargetReg) -> Vec<u8> {
         long_mode: false,
         opcode: vec![0x60],
         op1: None,
-        op2: Some(Operator2::Imm(reg as u64, ImmByte::Bit8)),
+        op2: Some(Op2::Imm(reg as u64, ImmByte::Bit8)),
     }
     .into_raw()
     .encode()
@@ -91,7 +172,7 @@ pub fn push_imm(atomic: bool, imm: u32) -> Vec<u8> {
         long_mode: false,
         opcode: vec![0x60],
         op1: None,
-        op2: Some(Operator2::Imm(imm as u64, ImmByte::Bit32)),
+        op2: Some(Op2::Imm(imm as u64, ImmByte::Bit32)),
     }
     .into_raw()
     .encode()
@@ -111,62 +192,62 @@ pub fn add_first_reg(atomic: bool, long_mode: bool, imm: u32) -> Vec<u8> {
         long_mode,
         opcode: vec![0x05],
         op1: None,
-        op2: Some(Operator2::Imm(imm as u64, ImmByte::Bit32)),
+        op2: Some(Op2::Imm(imm as u64, ImmByte::Bit32)),
     }
     .into_raw()
     .encode()
 }
 
-pub fn add_imm32(atomic: bool, long_mode: bool, op1: Operator1, imm: u32) -> Vec<u8> {
+pub fn add_imm32(atomic: bool, long_mode: bool, op1: Op1, imm: u32) -> Vec<u8> {
     Inst {
         atomic,
         long_mode,
         opcode: vec![0x81],
         op1: Some(op1),
-        op2: Some(Operator2::Imm(imm as u64, ImmByte::Bit32)),
+        op2: Some(Op2::Imm(imm as u64, ImmByte::Bit32)),
     }
     .into_raw()
     .encode()
 }
 
-pub fn add_imm8(atomic: bool, long_mode: bool, op1: Operator1, imm: u8) -> Vec<u8> {
+pub fn add_imm8(atomic: bool, long_mode: bool, op1: Op1, imm: u8) -> Vec<u8> {
     Inst {
         atomic,
         long_mode,
         opcode: vec![0x83],
         op1: Some(op1),
-        op2: Some(Operator2::Imm(imm as u64, ImmByte::Bit8)),
+        op2: Some(Op2::Imm(imm as u64, ImmByte::Bit8)),
     }
     .into_raw()
     .encode()
 }
 
-pub fn add(atomic: bool, long_mode: bool, op1: Operator1, op2: TargetReg) -> Vec<u8> {
+pub fn add(atomic: bool, long_mode: bool, op1: Op1, op2: TargetReg) -> Vec<u8> {
     Inst {
         atomic,
         long_mode,
         opcode: vec![0x01],
         op1: Some(op1),
-        op2: Some(Operator2::Register(op2)),
+        op2: Some(Op2::Reg(op2)),
     }
     .into_raw()
     .encode()
 }
 
 /// - add_rev: add_rev is the same as add, but the source and destination operands are reversed.
-pub fn add_rev(atomic: bool, long_mode: bool, op1: Operator1, op2: TargetReg) -> Vec<u8> {
+pub fn add_rev(atomic: bool, long_mode: bool, op1: Op1, op2: TargetReg) -> Vec<u8> {
     Inst {
         atomic,
         long_mode,
         opcode: vec![0x03],
         op1: Some(op1),
-        op2: Some(Operator2::Register(op2)),
+        op2: Some(Op2::Reg(op2)),
     }
     .into_raw()
     .encode()
 }
 
-pub fn inc(atomic: bool, long_mode: bool, op1: Operator1) -> Vec<u8> {
+pub fn inc(atomic: bool, long_mode: bool, op1: Op1) -> Vec<u8> {
     Inst {
         atomic,
         long_mode,
@@ -184,7 +265,7 @@ pub fn inc_reg32(atomic: bool, op1: Register32) -> Vec<u8> {
         long_mode: false,
         opcode: vec![0x40],
         op1: None,
-        op2: Some(Operator2::Register(TargetReg::from(op1 as u8))),
+        op2: Some(Op2::Reg(TargetReg::from(op1 as u8))),
     }
     .into_raw()
     .encode()
@@ -198,7 +279,7 @@ pub fn sub_first_reg(atomic: bool, imm: u32) -> Vec<u8> {
         long_mode: false,
         opcode: vec![0x2d],
         op1: None,
-        op2: Some(Operator2::Imm(imm as u64, ImmByte::Bit32)),
+        op2: Some(Op2::Imm(imm as u64, ImmByte::Bit32)),
     }
     .into_raw()
     .encode()
@@ -207,14 +288,14 @@ pub fn sub_first_reg(atomic: bool, imm: u32) -> Vec<u8> {
 pub fn sub_imm(
     atomic: bool,
     long_mode: bool,
-    op1: Operator1,
+    op1: Op1,
     imm: u32) -> Vec<u8> {
     Inst {
         atomic,
         long_mode,
         opcode: vec![0x81, 5],
         op1: Some(op1),
-        op2: Some(Operator2::Imm(imm as u64, ImmByte::Bit32)),
+        op2: Some(Op2::Imm(imm as u64, ImmByte::Bit32)),
     }
     .into_raw()
     .encode()
@@ -223,14 +304,14 @@ pub fn sub_imm(
 pub fn sub_signed_imm8(
     atomic: bool,
     long_mode: bool,
-    op1: Operator1,
+    op1: Op1,
     imm: u32) -> Vec<u8> {
     Inst {
         atomic,
         long_mode,
         opcode: vec![0x83, 5],
         op1: Some(op1),
-        op2: Some(Operator2::Imm(imm as u64, ImmByte::Bit32)),
+        op2: Some(Op2::Imm(imm as u64, ImmByte::Bit32)),
     }
     .into_raw()
     .encode()
@@ -240,14 +321,14 @@ pub fn sub_signed_imm8(
 pub fn sub(
     atomic: bool,
     long_mode: bool,
-    op1: Operator1,
+    op1: Op1,
     op2: TargetReg) -> Vec<u8> {
     Inst {
         atomic,
         long_mode,
         opcode: vec![0x29],
         op1: Some(op1),
-        op2: Some(Operator2::Register(op2)),
+        op2: Some(Op2::Reg(op2)),
     }
     .into_raw()
     .encode()
@@ -257,14 +338,14 @@ pub fn sub(
 pub fn sub_rev(
     atomic: bool,
     long_mode: bool,
-    op1: Operator1,
+    op1: Op1,
     op2: TargetReg) -> Vec<u8> {
     Inst {
         atomic,
         long_mode,
         opcode: vec![0x2b],
         op1: Some(op1),
-        op2: Some(Operator2::Register(op2)),
+        op2: Some(Op2::Reg(op2)),
     }
     .into_raw()
     .encode()
@@ -275,7 +356,7 @@ pub fn sub_rev(
 pub fn dec(
     atomic: bool,
     long_mode: bool,
-    op1: Operator1
+    op1: Op1
 ) -> Vec<u8> {
     Inst {
         atomic,
@@ -297,13 +378,111 @@ pub fn dec_reg32(
         long_mode: false,
         opcode: vec![0x48],
         op1: None,
-        op2: Some(Operator2::Register(TargetReg::from(reg as u8))),
+        op2: Some(Op2::Reg(TargetReg::from(reg as u8))),
     }
     .into_raw()
     .encode()
 }
 
-// ## nop
+/// ## cmp
+
+pub fn cmp_first_reg_and_imm(
+    long_mode: bool,
+    imm: u32
+) -> Vec<u8> {
+    Inst {
+        atomic: false,
+        long_mode,
+        opcode: vec![0x3d],
+        op1: None,
+        op2: Some(Op2::Imm(imm as u64, ImmByte::Bit32)),
+    }
+    .into_raw()
+    .encode()
+}
+
+/// - cmp: Compare imm32 [with r/m32 | sign-extended to 64-bits with r/m64]
+pub fn cmp_imm(
+    long_mode: bool,
+    op1: Op1,
+    imm: u32
+) -> Vec<u8> {
+    Inst {
+        atomic: false,
+        long_mode,
+        opcode: vec![0x81, 7],
+        op1: Some(op1),
+        op2: Some(Op2::Imm(imm as u64, ImmByte::Bit32)),
+    }
+    .into_raw()
+    .encode()
+}
+
+/// - cmp_imm8: Compare imm8 with r/m8
+pub fn cmp_imm8(
+    long_mode: bool,
+    op1: Op1,
+    imm: u8
+) -> Vec<u8> {
+    Inst {
+        atomic: false,
+        long_mode,
+        opcode: vec![0x83, 7],
+        op1: Some(op1),
+        op2: Some(Op2::Imm(imm as u64, ImmByte::Bit8)),
+    }
+    .into_raw()
+    .encode()
+}
+
+/// - cmp: Compare r32 with r/m32(64)
+pub fn cmp(
+    long_mode: bool,
+    op1: Op1,
+    op2: TargetReg
+) -> Vec<u8> {
+    Inst {
+        atomic: false,
+        long_mode,
+        opcode: vec![0x39, 7],
+        op1: Some(op1),
+        op2: Some(Op2::Reg(op2)),
+    }
+    .into_raw()
+    .encode()
+}
+
+/// - cmp_rev: Compare r/m32(64) with r32
+pub fn cmp_rev(
+    long_mode: bool,
+    op1: Op1,
+    op2: TargetReg
+) -> Vec<u8> {
+    Inst {
+        atomic: false,
+        long_mode,
+        opcode: vec![0x3b, 7],
+        op1: Some(op1),
+        op2: Some(Op2::Reg(op2)),
+    }
+    .into_raw()
+    .encode()
+}
+
+/// - cmps: Compares quadword at address (R|E)SI with quadword at address (R|E)DI and sets the status flags accordingly.
+pub fn cmps(long_mode: bool) -> Vec<u8> {
+    Inst {
+        atomic: false,
+        long_mode,
+        opcode: vec![0xa7],
+        op1: None,
+        op2: None,
+    }
+    .into_raw()
+    .encode()
+}
+
+/// ## nop
 
 #[inline]
 pub fn nop() -> Vec<u8> {
@@ -339,19 +518,19 @@ pub fn nop2() -> Vec<u8> {
 }
 
 pub fn nop3() -> Vec<u8> {
-    let r = nop_multi_reg(Operator1::Direct(TargetReg::from(0)));
+    let r = nop_multi_reg(Op1::Direct(TargetReg::from(0)));
     debug_assert_eq!(r.len(), 3);
     r
 }
 
 pub fn nop4() -> Vec<u8> {
-    let r = nop_multi_reg(Operator1::DeRef(TargetReg::from(0), u8::MAX as usize));
+    let r = nop_multi_reg(Op1::DeRef(TargetReg::from(0), u8::MAX as usize));
     debug_assert_eq!(r.len(), 4);
     r
 }
 
 pub fn nop5() -> Vec<u8> {
-    let r = nop_multi_reg(Operator1::ScaleBase(TargetReg::from(0), TargetReg::from(0), ScaledIndex::Id, u8::MAX as usize));
+    let r = nop_multi_reg(Op1::ScaleBase(TargetReg::from(0), TargetReg::from(0), ScaledIndex::Id, u8::MAX as usize));
     debug_assert_eq!(r.len(), 5);
     r
 }
@@ -361,7 +540,7 @@ pub fn nop6() -> Vec<u8> {
         atomic: false,
         long_mode: false,
         opcode: vec![66, 0x0f, 0x1f],
-        op1: Some(Operator1::ScaleBase(TargetReg::from(0), TargetReg::from(0), ScaledIndex::Id, u8::MAX as usize)),
+        op1: Some(Op1::ScaleBase(TargetReg::from(0), TargetReg::from(0), ScaledIndex::Id, u8::MAX as usize)),
         op2: None,
     }
     .into_raw()
@@ -371,13 +550,13 @@ pub fn nop6() -> Vec<u8> {
 }
 
 pub fn nop7() -> Vec<u8> {
-    let r = nop_multi_reg(Operator1::DeRef(TargetReg::from(0), u32::MAX as usize));
+    let r = nop_multi_reg(Op1::DeRef(TargetReg::from(0), u32::MAX as usize));
     debug_assert_eq!(r.len(), 7);
     r
 }
 
 pub fn nop8() -> Vec<u8> {
-    let r = nop_multi_reg(Operator1::ScaleBase(TargetReg::from(0), TargetReg::from(0), ScaledIndex::Id, u32::MAX as usize));
+    let r = nop_multi_reg(Op1::ScaleBase(TargetReg::from(0), TargetReg::from(0), ScaledIndex::Id, u32::MAX as usize));
     debug_assert_eq!(r.len(), 8);
     r
 }
@@ -387,7 +566,7 @@ pub fn nop9() -> Vec<u8> {
         atomic: false,
         long_mode: false,
         opcode: vec![66, 0x0f, 0x1f],
-        op1: Some(Operator1::ScaleBase(TargetReg::from(0), TargetReg::from(0), ScaledIndex::Id, u32::MAX as usize)),
+        op1: Some(Op1::ScaleBase(TargetReg::from(0), TargetReg::from(0), ScaledIndex::Id, u32::MAX as usize)),
         op2: None,
     }
     .into_raw()
@@ -396,7 +575,7 @@ pub fn nop9() -> Vec<u8> {
     r
 }
 
-pub fn nop_multi_reg(op1: Operator1) -> Vec<u8> {
+pub fn nop_multi_reg(op1: Op1) -> Vec<u8> {
     Inst {
         atomic: false,
         long_mode: false,
@@ -424,7 +603,7 @@ pub fn near_ret_imm16(imm: u16) -> Vec<u8> {
         long_mode: false,
         opcode: vec![0xc2],
         op1: None,
-        op2: Some(Operator2::Imm(imm as u64, ImmByte::Bit16)),
+        op2: Some(Op2::Imm(imm as u64, ImmByte::Bit16)),
     }
     .into_raw()
     .encode()
@@ -436,7 +615,7 @@ pub fn far_ret_imm16(imm: u16) -> Vec<u8> {
         long_mode: false,
         opcode: vec![0xca],
         op1: None,
-        op2: Some(Operator2::Imm(imm as u64, ImmByte::Bit16)),
+        op2: Some(Op2::Imm(imm as u64, ImmByte::Bit16)),
     }
     .into_raw()
     .encode()
