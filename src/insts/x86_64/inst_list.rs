@@ -1,4 +1,4 @@
-use crate::insts::x86_64::ImmByte;
+use crate::insts::{ImmByte, inst_dump_buf::JumpInst};
 
 use super::{registers::*, Inst, Op1, Op2};
 
@@ -480,6 +480,54 @@ pub fn cmps(long_mode: bool) -> Vec<u8> {
     }
     .into_raw()
     .encode()
+}
+
+/// ## jmp
+
+pub fn jmp(
+    label: String
+) -> JumpInst {
+    let opcodes = Inst {
+        atomic: false,
+        long_mode: false,
+        opcode: vec![0xe9],
+        op1: None,
+        op2: Some(Op2::Imm(0, ImmByte::Bit32)),
+    }
+    .into_raw()
+    .encode();
+    JumpInst::from(opcodes, ImmByte::Bit32, label)
+}
+
+pub fn jmp_to_reg(
+    reg: TargetReg
+) -> Vec<u8> {
+    Inst {
+        atomic: false,
+        long_mode: false,
+        opcode: vec![0xff, 4],
+        op1: Some(Op1::Direct(reg)),
+        op2: None,
+    }
+    .into_raw()
+    .encode()
+}
+
+/// ## conditional jump
+
+pub fn je(
+    label: String
+) -> JumpInst {
+    let opcodes = Inst {
+        atomic: false,
+        long_mode: false,
+        opcode: vec![0x0f, 0x84],
+        op1: None,
+        op2: Some(Op2::Imm(0, ImmByte::Bit32)),
+    }
+    .into_raw()
+    .encode();
+    JumpInst::from(opcodes, ImmByte::Bit32, label)
 }
 
 /// ## nop

@@ -3,7 +3,7 @@ mod page_manage;
 
 use insts::x86_64::inst_list::*;
 use insts::x86_64::registers::*;
-use insts::x86_64::Operator1;
+use insts::x86_64::Op1;
 use page_manage::*;
 
 fn _history() {
@@ -28,13 +28,13 @@ fn main() {
     let r = mov(
         false,
         true,
-        Operator1::Direct(TargetReg::from(Register64::Rax as u8)),
+        Op1::Direct(TargetReg::from(Register64::Rax as u8)),
         TargetReg::from(Register64::Rdi as u8),
     );
     let r1 = add_imm8(
         false,
         true,
-        Operator1::Direct(TargetReg::from(Register64::Rax as u8)),
+        Op1::Direct(TargetReg::from(Register64::Rax as u8)),
         4,
     );
     let r2 = near_ret();

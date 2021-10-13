@@ -7,6 +7,8 @@ use registers::{modrm, AddrMode, ScaledIndex, TargetReg, APPEND_SIB};
 
 use self::registers::sib;
 
+use super::ImmByte;
+
 const PREFIX_LOCK: u8 = 0xF0;
 const PREFIX_LONG_MODE: u8 = 0b01001000; // 48
 
@@ -52,28 +54,6 @@ impl Op1 {
                     addr_mode.encode_disp(disp),
                 )
             },
-        }
-    }
-}
-
-#[derive(Debug, Clone, Copy)]
-pub enum ImmByte {
-    Bit8,
-    Bit16,
-    Bit32,
-    Bit64,
-}
-
-impl ImmByte {
-    pub fn encode(self, imm: u64) -> Vec<u8> {
-        if let ImmByte::Bit8 = self {
-            (imm as u8).to_ne_bytes().to_vec()
-        } else if let ImmByte::Bit16 = self {
-            (imm as u16).to_ne_bytes().to_vec()
-        } else if let ImmByte::Bit32 = self {
-            (imm as u32).to_ne_bytes().to_vec()
-        } else {
-            imm.to_ne_bytes().to_vec()
         }
     }
 }
