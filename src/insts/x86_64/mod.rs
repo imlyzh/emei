@@ -1,9 +1,9 @@
-pub mod registers;
 pub mod inst_list;
+pub mod registers;
 
 use std::panic;
 
-use registers::{ScaledIndex, TargetReg, AddrMode, APPEND_SIB, modrm};
+use registers::{modrm, AddrMode, ScaledIndex, TargetReg, APPEND_SIB};
 
 use self::registers::sib;
 
@@ -11,7 +11,7 @@ const PREFIX_LOCK: u8 = 0xF0;
 const PREFIX_LONG_MODE: u8 = 0b01001000; // 48
 
 type ModRM = u8;
-type SIB = u8;
+type Sib = u8;
 
 #[derive(Debug, Clone, Copy)]
 pub enum Operator1 {
@@ -33,18 +33,22 @@ fn usize_boxed_length(u: usize) -> AddrMode {
 }
 
 impl Operator1 {
-    pub fn to_modrm_sib_disp(self, src_reg: TargetReg) -> (ModRM, Option<SIB>, Vec<u8>) {
+    pub fn to_modrm_sib_disp(self, src_reg: TargetReg) -> (ModRM, Option<Sib>, Vec<u8>) {
         match self {
-            Operator1::Direct(reg) =>
-                (modrm(AddrMode::Direct, reg, src_reg), None, vec![]),
+            Operator1::Direct(reg) => (modrm(AddrMode::Direct, reg, src_reg), None, vec![]),
             Operator1::DeRef(reg, disp) => {
                 let addr_mode = usize_boxed_length(disp);
-                (modrm(addr_mode, reg, src_reg), None, addr_mode.encode_disp(disp))
+                (
+                    modrm(addr_mode, reg, src_reg),
+                    None,
+                    addr_mode.encode_disp(disp),
+                )
             }
-            Operator1::ScaleBase(base, index, scale) => {
-                (modrm(AddrMode::RegRef, *APPEND_SIB, src_reg),
-            Some(sib(base, scale, index)), vec![])
-            },
+            Operator1::ScaleBase(base, index, scale) => (
+                modrm(AddrMode::RegRef, *APPEND_SIB, src_reg),
+                Some(sib(base, scale, index)),
+                vec![],
+            ),
         }
     }
 }
@@ -75,15 +79,6 @@ impl ImmByte {
 pub enum Operator2 {
     Imm(u64, ImmByte),
     Register(TargetReg),
-}
-
-impl Operator2 {
-    pub fn get_register(&self) -> Option<TargetReg> {
-        match *self {
-            Operator2::Register(reg) => Some(reg),
-            _ => None,
-        }
-    }
 }
 
 pub struct Inst {
@@ -122,24 +117,23 @@ impl Inst {
             self.opcode
         };
         let (mod_rm, sib, disp, imm) = match (self.op1, self.op2) {
-            (None, None) =>
-                (None, None, vec![], vec![]),
-            (None, Some(Operator2::Imm(value, imm_byte))) =>
-                (None, None, vec![], imm_byte.encode(value)),
-            (None, Some(Operator2::Register(op2))) =>
-                (None, None, vec![], vec![op2 as u8]),
+            (None, None) => (None, None, vec![], vec![]),
+            (None, Some(Operator2::Imm(value, imm_byte))) => {
+                (None, None, vec![], imm_byte.encode(value))
+            }
+            (None, Some(Operator2::Register(op2))) => (None, None, vec![], vec![op2 as u8]),
             (Some(op1), None) => {
                 let (mod_rm, sib, disp) = op1.to_modrm_sib_disp(TargetReg::from(0));
                 (Some(mod_rm), sib, disp, vec![])
-            },
+            }
             (Some(op1), Some(Operator2::Register(op2))) => {
                 let (mod_rm, sib, disp) = op1.to_modrm_sib_disp(op2);
                 (Some(mod_rm), sib, disp, vec![])
-            },
+            }
             (Some(op1), Some(Operator2::Imm(value, imm_byte))) => {
                 let (mod_rm, sib, disp) = op1.to_modrm_sib_disp(TargetReg::from(0));
                 (Some(mod_rm), sib, disp, imm_byte.encode(value))
-            },
+            }
         };
         RawInst {
             prefixes,
@@ -156,17 +150,13 @@ pub struct RawInst {
     pub prefixes: Vec<u8>, // 0~4bytes
     pub opcode: Vec<u8>,   // 0~3bytes
     pub modrm: Option<ModRM>,
-    pub sib: Option<SIB>,
-    pub disp: Vec<u8>,     // 1/2/4bytes
-    pub imm: Vec<u8>,      // 1/2/4bytes
+    pub sib: Option<Sib>,
+    pub disp: Vec<u8>, // 1/2/4bytes
+    pub imm: Vec<u8>,  // 1/2/4bytes
 }
 
 impl RawInst {
-    #[inline]
-    pub fn new() -> Self {
-        todo!()
-    }
-
+    /*
     #[inline]
     pub fn check(&self) -> bool {
         const RANGE: [usize; 3] = [1, 2, 4];
@@ -175,6 +165,7 @@ impl RawInst {
         RANGE.contains(&self.disp.len()) &&
         RANGE.contains(&self.imm.len())
     }
+    // */
 
     #[inline]
     pub fn encode(self) -> Vec<u8> {

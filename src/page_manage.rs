@@ -3,7 +3,6 @@ use std::ffi::c_void;
 #[cfg(windows)]
 use winapi::ctypes::c_void;
 
-
 #[derive(Debug, Clone, Copy, Eq, PartialEq, Ord, PartialOrd)]
 pub struct PageSize(pub usize);
 
@@ -32,11 +31,12 @@ impl PageSize {
             (*sysinfo).dwPageSize as usize
         };
 
-        unsafe { dealloc(sysinfo as *mut u8, layout); }
+        unsafe {
+            dealloc(sysinfo as *mut u8, layout);
+        }
         Self(page_size)
     }
 }
-
 
 #[derive(Debug, Clone, Eq, PartialEq)]
 pub struct PageHandle {
@@ -49,7 +49,9 @@ impl PageHandle {
     #[inline]
     pub fn from(page_size: PageSize, src: &[u8]) -> Self {
         let r = Self::new(src.len(), page_size);
-        unsafe { std::ptr::copy(src.as_ptr(), r.ptr, r.len); }
+        unsafe {
+            std::ptr::copy(src.as_ptr(), r.ptr, r.len);
+        }
         r.make_page_executable();
         r
     }
@@ -74,17 +76,24 @@ impl PageHandle {
 impl PageHandle {
     #[inline]
     pub fn new(size: usize, page_size: PageSize) -> Self {
-        use nix::sys::mman::{mmap, ProtFlags, MapFlags};
+        use nix::sys::mman::{mmap, MapFlags, ProtFlags};
         unsafe {
             let page_size = page_size.0;
             let size_mod = size % page_size;
-            let alloc_size = if size_mod == 0 { size } else { size + page_size - size_mod };
+            let alloc_size = if size_mod == 0 {
+                size
+            } else {
+                size + page_size - size_mod
+            };
             let ptr = mmap(
                 std::ptr::null_mut(),
                 alloc_size,
                 ProtFlags::PROT_READ | ProtFlags::PROT_WRITE,
                 MapFlags::MAP_PRIVATE | MapFlags::MAP_ANONYMOUS,
-                -1, 0).unwrap();
+                -1,
+                0,
+            )
+            .unwrap();
             if ptr.is_null() {
                 panic!("VirtualAlloc failed");
             }
@@ -103,7 +112,9 @@ impl PageHandle {
             mprotect(
                 self.ptr as *mut c_void,
                 self.cap,
-                ProtFlags::PROT_READ | ProtFlags::PROT_EXEC).unwrap();
+                ProtFlags::PROT_READ | ProtFlags::PROT_EXEC,
+            )
+            .unwrap();
         }
     }
 }
@@ -112,16 +123,21 @@ impl PageHandle {
 impl PageHandle {
     #[inline]
     pub fn new(size: usize, page_size: PageSize) -> Self {
-        use winapi::um::{winnt, memoryapi};
+        use winapi::um::{memoryapi, winnt};
         unsafe {
             let page_size = page_size.0;
             let size_mod = size % page_size;
-            let alloc_size = if size_mod == 0 { size } else { size + page_size - size_mod };
+            let alloc_size = if size_mod == 0 {
+                size
+            } else {
+                size + page_size - size_mod
+            };
             let ptr = memoryapi::VirtualAlloc(
                 std::ptr::null_mut(),
                 alloc_size,
                 winnt::MEM_COMMIT,
-                winnt::PAGE_READWRITE);
+                winnt::PAGE_READWRITE,
+            );
             if ptr.is_null() {
                 panic!("VirtualAlloc failed");
             }
@@ -135,21 +151,21 @@ impl PageHandle {
 
     #[inline]
     pub fn make_page_executable(&self) {
-        use winapi::um::{winnt, memoryapi};
+        use winapi::um::{memoryapi, winnt};
         unsafe {
-            let mut flag =  winnt::PAGE_READWRITE;
+            let mut flag = winnt::PAGE_READWRITE;
             let r = memoryapi::VirtualProtect(
                 self.ptr as *mut c_void,
                 self.cap,
                 winnt::PAGE_EXECUTE_READ,
-                &mut flag);
+                &mut flag,
+            );
             if r == 0 {
                 panic!("VirtualProtect failed");
             }
         }
     }
 }
-
 
 #[cfg(unix)]
 impl Drop for PageHandle {
@@ -166,12 +182,9 @@ impl Drop for PageHandle {
 impl Drop for PageHandle {
     #[inline]
     fn drop(&mut self) {
-        use winapi::um::{winnt, memoryapi};
+        use winapi::um::{memoryapi, winnt};
         unsafe {
-            memoryapi::VirtualFree(
-                self.ptr as *mut c_void,
-                0,
-                winnt::MEM_RELEASE);
+            memoryapi::VirtualFree(self.ptr as *mut c_void, 0, winnt::MEM_RELEASE);
         }
     }
 }

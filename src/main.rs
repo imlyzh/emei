@@ -1,10 +1,10 @@
-mod page_manage;
 mod insts;
+mod page_manage;
 
-use page_manage::*;
-use insts::x86_64::Operator1;
-use insts::x86_64::registers::*;
 use insts::x86_64::inst_list::*;
+use insts::x86_64::registers::*;
+use insts::x86_64::Operator1;
+use page_manage::*;
 
 fn _history() {
     /*
@@ -28,17 +28,21 @@ fn main() {
     let r = mov(
         false,
         true,
-        Operator1::Direct(TargetReg::from(Register64::RAX as u8)),
-        TargetReg::from(Register64::RDI as u8));
+        Operator1::Direct(TargetReg::from(Register64::Rax as u8)),
+        TargetReg::from(Register64::Rdi as u8),
+    );
     let r1 = add_imm8(
-            false,
-            true,
-            Operator1::Direct(TargetReg::from(Register64::RAX as u8)),
-            4);
+        false,
+        true,
+        Operator1::Direct(TargetReg::from(Register64::Rax as u8)),
+        4,
+    );
     let r2 = near_ret();
     let src = [r.iter(), r1.iter(), r2.iter()]
-        .into_iter().flatten().cloned().collect::<Vec<u8>>();
-
+        .into_iter()
+        .flatten()
+        .cloned()
+        .collect::<Vec<u8>>();
 
     let r = PageHandle::from(page_size, &src);
 

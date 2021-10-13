@@ -1,10 +1,19 @@
 [package]
 name = "emei"
+license = "GPL3"
 version = "0.1.0"
+authors = ["Lyzh <enterindex@gmail.com>"]
 edition = "2021"
 description = "The EMei JIT/AOT backend framework."
+repository = "https://github.com/imlyzh/sexpr_ir"
+readme = "README.md"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[lib]
+name = "libemei"
+path = "src/lib.rs"
+
 
 [dependencies]
 lazy_static = "1.4"
