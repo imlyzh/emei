@@ -1,13 +1,7 @@
 #[cfg(unix)]
 use std::ffi::c_void;
-#[cfg(unix)]
-use nix::sys::mman::{mmap, munmap, mprotect, ProtFlags, MapFlags};
-#[cfg(unix)]
-use nix::unistd::{sysconf, SysconfVar};
-
 #[cfg(windows)]
 use winapi::ctypes::c_void;
-
 
 
 #[derive(Debug, Clone, Copy, Eq, PartialEq, Ord, PartialOrd)]
@@ -17,6 +11,8 @@ impl PageSize {
     #[cfg(unix)]
     #[inline]
     pub fn from_system() -> Self {
+        use nix::unistd::{sysconf, SysconfVar};
+
         let page_size = sysconf(SysconfVar::PAGE_SIZE).unwrap().unwrap() as usize;
         Self(page_size)
     }
@@ -74,10 +70,11 @@ impl PageHandle {
     }
 }
 
+#[cfg(unix)]
 impl PageHandle {
-    #[cfg(unix)]
     #[inline]
     pub fn new(size: usize, page_size: PageSize) -> Self {
+        use nix::sys::mman::{mmap, ProtFlags, MapFlags};
         unsafe {
             let page_size = page_size.0;
             let size_mod = size % page_size;
@@ -99,7 +96,20 @@ impl PageHandle {
         }
     }
 
-    #[cfg(windows)]
+    #[inline]
+    pub fn make_page_executable(&self) {
+        use nix::sys::mman::{mprotect, ProtFlags};
+        unsafe {
+            mprotect(
+                self.ptr as *mut c_void,
+                self.cap,
+                ProtFlags::PROT_READ | ProtFlags::PROT_EXEC).unwrap();
+        }
+    }
+}
+
+#[cfg(windows)]
+impl PageHandle {
     #[inline]
     pub fn new(size: usize, page_size: PageSize) -> Self {
         use winapi::um::{winnt, memoryapi};
@@ -123,18 +133,6 @@ impl PageHandle {
         }
     }
 
-    #[cfg(unix)]
-    #[inline]
-    pub fn make_page_executable(&self) {
-        unsafe {
-            mprotect(
-                self.ptr as *mut c_void,
-                self.cap,
-                ProtFlags::PROT_READ | ProtFlags::PROT_EXEC).unwrap();
-        }
-    }
-
-    #[cfg(windows)]
     #[inline]
     pub fn make_page_executable(&self) {
         use winapi::um::{winnt, memoryapi};
@@ -152,17 +150,20 @@ impl PageHandle {
     }
 }
 
+
+#[cfg(unix)]
 impl Drop for PageHandle {
-    #[cfg(unix)]
     #[inline]
     fn drop(&mut self) {
+        use nix::sys::mman::munmap;
         unsafe {
             munmap(self.ptr as *mut c_void, self.cap).unwrap();
         }
     }
+}
 
-
-    #[cfg(windows)]
+#[cfg(windows)]
+impl Drop for PageHandle {
     #[inline]
     fn drop(&mut self) {
         use winapi::um::{winnt, memoryapi};
