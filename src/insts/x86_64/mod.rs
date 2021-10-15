@@ -10,7 +10,20 @@ use self::registers::sib;
 use super::ImmByte;
 
 const PREFIX_LOCK: u8 = 0xF0;
-const PREFIX_LONG_MODE: u8 = 0b01001000; // 48
+
+// W 3 0 = Operand size determined by CS.D
+//     1 = 64 Bit Operand Size
+// R 2 Extension of the ModR/M reg field
+// X 1 Extension of the SIB index field
+// B 0 Extension of the ModR/M r/m field, SIB base field, or Opcode reg field
+
+const REX_W: u8 = 0b01001000; // 48
+const REX_R: u8 = 0b01000100; // 44
+const REX_X: u8 = 0b01000010; // 42
+const REX_B: u8 = 0b01000001; // 41
+
+
+///////////////////////////////////////////////////////
 
 type ModRM = u8;
 type Sib = u8;
@@ -93,7 +106,7 @@ impl Inst {
             vec![]
         };
         let opcode = if self.long_mode {
-            let mut r = vec![PREFIX_LONG_MODE];
+            let mut r = vec![REX_W];
             r.extend(self.opcode);
             r
         } else {
