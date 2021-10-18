@@ -28,17 +28,23 @@ fn main() {
     let r = mov(
         false,
         true,
-        Op1::Direct(TargetReg::from(Register64::Rax as u8)),
+        Op1::Direct(TargetReg::from(Register64::R8 as u8)),
         TargetReg::from(Register64::Rdi as u8),
     );
-    let r1 = add_imm8(
+    let r1 = mov(
+        false,
+        true,
+        Op1::Direct(TargetReg::from(Register64::Rax as u8)),
+        TargetReg::from(Register64::R8 as u8),
+    );
+    let r2 = add_imm8(
         false,
         true,
         Op1::Direct(TargetReg::from(Register64::Rax as u8)),
         4,
     );
-    let r2 = near_ret();
-    let src = [r.iter(), r1.iter(), r2.iter()]
+    let r3 = near_ret();
+    let src = [r.iter(), r1.iter(), r2.iter(), r3.iter()]
         .into_iter()
         .flatten()
         .cloned()

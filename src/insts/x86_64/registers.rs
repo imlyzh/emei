@@ -2,7 +2,7 @@ use lazy_static::lazy_static;
 
 macro_rules! make_register_enum {
     ($name:ident, $i0:ident, $i1:ident, $i2:ident, $i3:ident, $i4:ident, $i5:ident, $i6:ident, $i7:ident) => {
-        #[repr(u8)] // 4bit
+        #[repr(u8)] // 3bit
         #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
         pub enum $name {
             $i0 = 0,
@@ -59,7 +59,7 @@ impl From<u8> for Register64 {
     }
 }
 
-#[repr(u8)] // 4bit
+#[repr(u8)] // 2bit
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum AddrMode {
     RegRef = 0,
@@ -73,13 +73,55 @@ pub type TargetReg = Register32;
 #[cfg(target_arch = "x86_64")]
 pub type TargetReg = Register64;
 
+#[cfg(target_arch = "x86")]
+impl TargetReg {
+    pub fn is_extend(&self) -> bool {
+        let v = *self as u8;
+        if v >= 8 {
+            panic!("x86 target is not support 64bit extend register");
+        } else {
+            false
+        }
+    }
+
+    pub fn get_reg(&self) -> Register32 {
+        let v = *self as u8;
+        if v >= 8 {
+            panic!("x86 target is not support 64bit extend register");
+        } else {
+            Register32::from(v)
+        }
+    }
+}
+
+#[cfg(target_arch = "x86_64")]
+impl TargetReg {
+    pub fn is_extend(&self) -> bool {
+        let v = *self as u8;
+        if v >= 8 {
+            true
+        } else {
+            false
+        }
+    }
+
+    pub fn get_reg(&self) -> Register32 {
+        let v = *self as u8;
+        if v >= 8 {
+            Register32::from(v - 8)
+        } else {
+            Register32::from(v)
+        }
+    }
+}
+
 lazy_static! {
-    pub static ref APPEND_SIB: TargetReg = unsafe { std::mem::transmute_copy(&4u8) };
-    pub static ref DISP32: TargetReg = unsafe { std::mem::transmute_copy(&5u8) };
+    pub static ref APPEND_SIB: Register32 = unsafe { std::mem::transmute_copy(&4u8) };
+    pub static ref DISP32: Register32 = unsafe { std::mem::transmute_copy(&5u8) };
 }
 
 #[inline]
-pub fn modrm(addr_mode: AddrMode, dgt_reg: TargetReg, src_reg: TargetReg) -> u8 {
+pub fn modrm(addr_mode: AddrMode, dgt_reg: Register32, src_reg: Register32) -> u8 {
     let r = dbg!(dgt_reg as u8);
     let r = dbg!(r + ((src_reg as u8) << 3u8));
     let r = dbg!(r + ((addr_mode as u8) << 6u8));

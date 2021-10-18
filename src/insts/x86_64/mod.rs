@@ -32,7 +32,29 @@ type Sib = u8;
 pub enum Op1 {
     Direct(TargetReg),
     DeRef(TargetReg, usize),
-    ScaleBase(TargetReg, TargetReg, ScaledIndex, usize),
+    ScaleBase(TargetReg, TargetReg, ScaledIndex, usize), // base index scaleindex disp
+}
+
+#[cfg(target_arch = "x86")]
+impl Op1 {
+    fn rex_value(&self) -> u8 {
+        0
+    }
+}
+
+#[cfg(target_arch = "x86_64")]
+impl Op1 {
+    fn rex_value(&self) -> u8 {
+        match self {
+            Op1::Direct(r) => if r.is_extend() {REX_B} else {0},
+            Op1::DeRef(r, _) => if r.is_extend() {REX_B} else {0},
+            Op1::ScaleBase(baser, indexr, _, _) => {
+                let a = if baser.is_extend() {REX_B} else {0};
+                let b = if indexr.is_extend() {REX_X} else {0};
+                a | b
+            },
+        }
+    }
 }
 
 fn usize_boxed_length(u: usize) -> AddrMode {
@@ -50,11 +72,11 @@ fn usize_boxed_length(u: usize) -> AddrMode {
 impl Op1 {
     pub fn to_modrm_sib_disp(self, src_reg: TargetReg) -> (ModRM, Option<Sib>, Vec<u8>) {
         match self {
-            Op1::Direct(reg) => (modrm(AddrMode::Direct, reg, src_reg), None, vec![]),
+            Op1::Direct(reg) => (modrm(AddrMode::Direct, reg.get_reg(), src_reg.get_reg()), None, vec![]),
             Op1::DeRef(reg, disp) => {
                 let addr_mode = usize_boxed_length(disp);
                 (
-                    modrm(addr_mode, reg, src_reg),
+                    modrm(addr_mode, reg.get_reg(), src_reg.get_reg()),
                     None,
                     addr_mode.encode_disp(disp),
                 )
@@ -62,7 +84,7 @@ impl Op1 {
             Op1::ScaleBase(base, index, scale, disp) => {
                 let addr_mode = usize_boxed_length(disp);
                 (
-                    modrm(addr_mode, *APPEND_SIB, src_reg),
+                    modrm(addr_mode, *APPEND_SIB, src_reg.get_reg()),
                     Some(sib(base, scale, index)),
                     addr_mode.encode_disp(disp),
                 )
@@ -75,6 +97,27 @@ impl Op1 {
 pub enum Op2 {
     Imm(u64, ImmByte),
     Reg(TargetReg),
+}
+
+#[cfg(target_arch = "x86")]
+impl Op2 {
+    fn rex_value(&self) -> u8 {
+        0
+    }
+}
+
+#[cfg(target_arch = "x86_64")]
+impl Op2 {
+    fn rex_value(&self) -> u8 {
+        match self {
+            Op2::Imm(_, _) => 0,
+            Op2::Reg(r) => if r.is_extend() {
+                REX_R
+            } else {
+                0
+            },
+        }
+    }
 }
 
 pub struct Inst {
@@ -106,7 +149,15 @@ impl Inst {
             vec![]
         };
         let opcode = if self.long_mode {
-            let mut r = vec![REX_W];
+            let op1_rex = self.op1.map(|op1| op1.rex_value()).unwrap_or(0);
+            let op2_rex = self.op2.map(|op2| op2.rex_value()).unwrap_or(0);
+            // warning! this logic is not tested
+            let op2_rex = if self.op1.is_none() {
+                REX_B
+            } else {
+                op2_rex
+            };
+            let mut r = vec![REX_W | op1_rex | op2_rex];
             r.extend(self.opcode);
             r
         } else {
