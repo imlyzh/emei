@@ -6,6 +6,12 @@ use winapi::ctypes::c_void;
 #[derive(Debug, Clone, Copy, Eq, PartialEq, Ord, PartialOrd)]
 pub struct PageSize(pub usize);
 
+impl From<usize> for PageSize {
+    fn from(i: usize) -> Self {
+        Self(i)
+    }
+}
+
 impl PageSize {
     #[cfg(unix)]
     #[inline]

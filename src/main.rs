@@ -50,7 +50,7 @@ fn main() {
         .cloned()
         .collect::<Vec<u8>>();
 
-    let r = PageHandle::from(page_size, &src);
+    let r = PageHandle::from(PageSize::from(src.capacity()), &src);
 
     let code: extern "C" fn(i32) -> i32 = unsafe { std::mem::transmute(r.get_ptr()) };
 
