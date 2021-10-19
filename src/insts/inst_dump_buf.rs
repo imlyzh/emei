@@ -1,6 +1,4 @@
-use std::{borrow::Borrow, cell::RefCell, collections::HashMap, ops::{AddAssign, DerefMut}};
-
-use lazy_static::__Deref;
+use std::{cell::RefCell, collections::HashMap, ops::{AddAssign, DerefMut}};
 
 use crate::insts::ImmByte;
 

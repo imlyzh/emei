@@ -515,20 +515,57 @@ pub fn jmp_to_reg(
 
 /// ## conditional jump
 
-pub fn je(
-    label: String
-) -> JumpInst {
-    let opcodes = Inst {
-        atomic: false,
-        long_mode: false,
-        opcode: vec![0x0f, 0x84],
-        op1: None,
-        op2: Some(Op2::Imm(0, ImmByte::Bit32)),
-    }
-    .into_raw()
-    .encode();
-    JumpInst::from(opcodes, ImmByte::Bit32, label)
+macro_rules! impl_cond_jump_inst {
+    ($name:ident, $expr: expr) => {
+        pub fn $name(
+            label: String
+        ) -> JumpInst {
+            let opcodes = Inst {
+                atomic: false,
+                long_mode: false,
+                opcode: $expr,
+                op1: None,
+                op2: Some(Op2::Imm(0, ImmByte::Bit32)),
+            }
+            .into_raw()
+            .encode();
+            JumpInst::from(opcodes, ImmByte::Bit32, label)
+        }
+    };
 }
+
+
+impl_cond_jump_inst!(ja, vec![0x0f, 0x87]);
+impl_cond_jump_inst!(jb, vec![0x0f, 0x82]);
+impl_cond_jump_inst!(jc, vec![0x0f, 0x82]);
+impl_cond_jump_inst!(je, vec![0x0f, 0x84]);
+impl_cond_jump_inst!(jg, vec![0x0f, 0x8f]);
+impl_cond_jump_inst!(jl, vec![0x0f, 0x8c]);
+impl_cond_jump_inst!(jo, vec![0x0f, 0x80]);
+impl_cond_jump_inst!(jp, vec![0x0f, 0x8a]);
+impl_cond_jump_inst!(js, vec![0x0f, 0x88]);
+impl_cond_jump_inst!(jz, vec![0x0f, 0x84]);
+impl_cond_jump_inst!(jae, vec![0x0f, 0x83]);
+impl_cond_jump_inst!(jbe, vec![0x0f, 0x86]);
+impl_cond_jump_inst!(jge, vec![0x0f, 0x8d]);
+impl_cond_jump_inst!(jle, vec![0x0f, 0x8e]);
+impl_cond_jump_inst!(jpe, vec![0x0f, 0x8a]);
+impl_cond_jump_inst!(jpo, vec![0x0f, 0x8b]);
+impl_cond_jump_inst!(jna, vec![0x0f, 0x86]);
+impl_cond_jump_inst!(jnb, vec![0x0f, 0x83]);
+impl_cond_jump_inst!(jnc, vec![0x0f, 0x83]);
+impl_cond_jump_inst!(jne, vec![0x0f, 0x85]);
+impl_cond_jump_inst!(jng, vec![0x0f, 0x8e]);
+impl_cond_jump_inst!(jnl, vec![0x0f, 0x8d]);
+impl_cond_jump_inst!(jno, vec![0x0f, 0x81]);
+impl_cond_jump_inst!(jnp, vec![0x0f, 0x8b]);
+impl_cond_jump_inst!(jns, vec![0x0f, 0x89]);
+impl_cond_jump_inst!(jnz, vec![0x0f, 0x85]);
+impl_cond_jump_inst!(jnae, vec![0x0f, 0x82]);
+impl_cond_jump_inst!(jnbe, vec![0x0f, 0x87]);
+impl_cond_jump_inst!(jnge, vec![0x0f, 0x8c]);
+impl_cond_jump_inst!(jnle, vec![0x0f, 0x8f]);
+
 
 /// ## nop
 
