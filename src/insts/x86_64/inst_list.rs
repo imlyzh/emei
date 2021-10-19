@@ -907,6 +907,178 @@ impl_cond_jump_inst!(jnge, vec![0x0f, 0x8c]);
 impl_cond_jump_inst!(jnle, vec![0x0f, 0x8f]);
 
 
+/// ## logic inst
+
+/// ### and
+
+pub fn and_first_reg_imm32(
+    long_mode: bool,
+    imm: u32) -> Vec<u8> {
+    Inst {
+        atomic: false,
+        long_mode,
+        opcode: vec![0x25],
+        op1: None,
+        op2: None,
+        imm: Some(Imm::from(imm)),
+    }
+    .into_raw()
+    .encode()
+}
+
+pub fn and_reg_imm32(
+    long_mode: bool,
+    op1: Op1,
+    imm: u32
+) -> Vec<u8> {
+    Inst {
+        atomic: false,
+        long_mode,
+        opcode: vec![0x81, 4],
+        op1: Some(op1),
+        op2: None,
+        imm: Some(Imm::from(imm)),
+    }
+    .into_raw()
+    .encode()
+}
+
+pub fn and_reg_imm8(
+    long_mode: bool,
+    op1: Op1,
+    imm: u8
+) -> Vec<u8> {
+    Inst {
+        atomic: false,
+        long_mode,
+        opcode: vec![0x83, 4],
+        op1: Some(op1),
+        op2: None,
+        imm: Some(Imm::from(imm)),
+    }
+    .into_raw()
+    .encode()
+}
+
+pub fn and(
+    long_mode: bool,
+    op1: Op1,
+    reg: TargetReg
+) -> Vec<u8> {
+    Inst {
+        atomic: false,
+        long_mode,
+        opcode: vec![0x21],
+        op1: Some(op1),
+        op2: Some(reg),
+        imm: None,
+    }
+    .into_raw()
+    .encode()
+}
+
+pub fn and_rev(
+    long_mode: bool,
+    op1: Op1,
+    reg: TargetReg
+) -> Vec<u8> {
+    Inst {
+        atomic: false,
+        long_mode,
+        opcode: vec![0x23],
+        op1: Some(op1),
+        op2: Some(reg),
+        imm: None,
+    }
+    .into_raw()
+    .encode()
+}
+
+/// ### or
+
+pub fn or_first_reg_imm32(
+    long_mode: bool,
+    imm: u32) -> Vec<u8> {
+    Inst {
+        atomic: false,
+        long_mode,
+        opcode: vec![0x0d],
+        op1: None,
+        op2: None,
+        imm: Some(Imm::from(imm)),
+    }
+    .into_raw()
+    .encode()
+}
+
+pub fn or_reg_imm32(
+    long_mode: bool,
+    op1: Op1,
+    imm: u32
+) -> Vec<u8> {
+    Inst {
+        atomic: false,
+        long_mode,
+        opcode: vec![0x81, 1],
+        op1: Some(op1),
+        op2: None,
+        imm: Some(Imm::from(imm)),
+    }
+    .into_raw()
+    .encode()
+}
+
+pub fn or_reg_imm8(
+    long_mode: bool,
+    op1: Op1,
+    imm: u8
+) -> Vec<u8> {
+    Inst {
+        atomic: false,
+        long_mode,
+        opcode: vec![0x83, 1],
+        op1: Some(op1),
+        op2: None,
+        imm: Some(Imm::from(imm)),
+    }
+    .into_raw()
+    .encode()
+}
+
+pub fn or(
+    long_mode: bool,
+    op1: Op1,
+    reg: TargetReg
+) -> Vec<u8> {
+    Inst {
+        atomic: false,
+        long_mode,
+        opcode: vec![0x09],
+        op1: Some(op1),
+        op2: Some(reg),
+        imm: None,
+    }
+    .into_raw()
+    .encode()
+}
+
+pub fn or_rev(
+    long_mode: bool,
+    op1: Op1,
+    reg: TargetReg
+) -> Vec<u8> {
+    Inst {
+        atomic: false,
+        long_mode,
+        opcode: vec![0x0b],
+        op1: Some(op1),
+        op2: Some(reg),
+        imm: None,
+    }
+    .into_raw()
+    .encode()
+}
+
 /// ## nop
 
 #[inline]
