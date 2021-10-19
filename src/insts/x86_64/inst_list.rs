@@ -1,4 +1,4 @@
-use crate::insts::{ImmByte, inst_dump_buf::JumpInst, x86_64::Imm};
+use crate::insts::{ImmByte, inst_dump_buf::{CallInst, JumpInst}, x86_64::Imm};
 
 use super::{registers::*, Inst, Op1, Op2};
 
@@ -298,7 +298,7 @@ pub fn sub_first_reg(atomic: bool, imm: u32) -> Vec<u8> {
         opcode: vec![0x2d],
         op1: None,
         op2: None,
-        imm: Some(Imm(imm as u64, ImmByte::Bit32)),
+        imm: Some(Imm::from(imm)),
     }
     .into_raw()
     .encode()
@@ -315,7 +315,7 @@ pub fn sub_imm(
         opcode: vec![0x81, 5],
         op1: Some(op1),
         op2: None,
-        imm: Some(Imm(imm as u64, ImmByte::Bit32)),
+        imm: Some(Imm::from(imm)),
     }
     .into_raw()
     .encode()
@@ -325,14 +325,14 @@ pub fn sub_signed_imm8(
     atomic: bool,
     long_mode: bool,
     op1: Op1,
-    imm: u32) -> Vec<u8> {
+    imm: u8) -> Vec<u8> {
     Inst {
         atomic,
         long_mode,
         opcode: vec![0x83, 5],
         op1: Some(op1),
         op2: None,
-        imm: Some(Imm(imm as u64, ImmByte::Bit8)),
+        imm: Some(Imm::from(imm)),
     }
     .into_raw()
     .encode()
@@ -409,7 +409,7 @@ pub fn dec_reg32(
     .encode()
 }
 
-// neg
+/// neg
 
 pub fn neg(
     atomic: bool,
@@ -428,8 +428,9 @@ pub fn neg(
     .encode()
 }
 
-// mul
-pub fn mul(
+/// ## mul
+
+pub fn mul_byte_first_reg(
     atomic: bool,
     long_mode: bool,
     op1: Op1
@@ -437,7 +438,58 @@ pub fn mul(
     Inst {
         atomic,
         long_mode,
-        opcode: vec![0xf7],
+        opcode: vec![0xf6, 4],
+        op1: Some(op1),
+        op2: None,
+        imm: None,
+    }
+    .into_raw()
+    .encode()
+}
+
+pub fn mul_first_reg(
+    atomic: bool,
+    long_mode: bool,
+    op1: Op1
+) -> Vec<u8> {
+    Inst {
+        atomic,
+        long_mode,
+        opcode: vec![0xf7, 4],
+        op1: Some(op1),
+        op2: None,
+        imm: None,
+    }
+    .into_raw()
+    .encode()
+}
+
+pub fn imul_byte_first_reg(
+    atomic: bool,
+    long_mode: bool,
+    op1: Op1
+) -> Vec<u8> {
+    Inst {
+        atomic,
+        long_mode,
+        opcode: vec![0xf6, 5],
+        op1: Some(op1),
+        op2: None,
+        imm: None,
+    }
+    .into_raw()
+    .encode()
+}
+
+pub fn imul_first_reg(
+    atomic: bool,
+    long_mode: bool,
+    op1: Op1
+) -> Vec<u8> {
+    Inst {
+        atomic,
+        long_mode,
+        opcode: vec![0xf7, 5],
         op1: Some(op1),
         op2: None,
         imm: None,
@@ -455,7 +507,7 @@ pub fn imul_reg(
     Inst {
         atomic,
         long_mode,
-        opcode: vec![0xf7],
+        opcode: vec![0x0f, 0xaf],
         op1: Some(op1),
         op2: Some(op2),
         imm: None,
@@ -474,9 +526,131 @@ pub fn imul_reg_and_imm8(
     Inst {
         atomic,
         long_mode,
-        opcode: vec![0xf7],
+        opcode: vec![0x6b],
         op1: Some(op1),
         op2: Some(op2),
+        imm: Some(Imm::from(imm)),
+    }
+    .into_raw()
+    .encode()
+}
+
+pub fn imul_reg_and_imm32(
+    atomic: bool,
+    long_mode: bool,
+    op1: Op1,
+    op2: TargetReg,
+    imm: u32
+) -> Vec<u8> {
+    Inst {
+        atomic,
+        long_mode,
+        opcode: vec![0x69],
+        op1: Some(op1),
+        op2: Some(op2),
+        imm: Some(Imm::from(imm)),
+    }
+    .into_raw()
+    .encode()
+}
+
+/// ## div
+
+pub fn div_byte_first_reg(
+    atomic: bool,
+    long_mode: bool,
+    op1: Op1
+) -> Vec<u8> {
+    Inst {
+        atomic,
+        long_mode,
+        opcode: vec![0xf6, 6],
+        op1: Some(op1),
+        op2: None,
+        imm: None,
+    }
+    .into_raw()
+    .encode()
+}
+
+pub fn div_first_reg(
+    atomic: bool,
+    long_mode: bool,
+    op1: Op1
+) -> Vec<u8> {
+    Inst {
+        atomic,
+        long_mode,
+        opcode: vec![0xf7, 6],
+        op1: Some(op1),
+        op2: None,
+        imm: None,
+    }
+    .into_raw()
+    .encode()
+}
+
+
+pub fn idiv_byte_first_reg(
+    atomic: bool,
+    long_mode: bool,
+    op1: Op1
+) -> Vec<u8> {
+    Inst {
+        atomic,
+        long_mode,
+        opcode: vec![0xf6, 6],
+        op1: Some(op1),
+        op2: None,
+        imm: None,
+    }
+    .into_raw()
+    .encode()
+}
+
+pub fn idiv_first_reg(
+    atomic: bool,
+    long_mode: bool,
+    op1: Op1
+) -> Vec<u8> {
+    Inst {
+        atomic,
+        long_mode,
+        opcode: vec![0xf7, 6],
+        op1: Some(op1),
+        op2: None,
+        imm: None,
+    }
+    .into_raw()
+    .encode()
+}
+
+/// cbw
+
+/// EAX ← sign-extend of AX.
+/// RAX ← sign-extend of EAX(long mode only).
+pub fn sign_extend(long_mode: bool) -> Vec<u8> {
+    Inst {
+        atomic: false,
+        long_mode,
+        opcode: vec![0x98],
+        op1: None,
+        op2: None,
+        imm: None,
+    }
+    .into_raw()
+    .encode()
+}
+
+/// EDX:EAX ← sign-extend of EAX
+/// RDX:RAX ← sign-extend of RAX(long mode only).
+pub fn sign_extend2(long_mode: bool) -> Vec<u8> {
+    Inst {
+        atomic: false,
+        long_mode,
+        opcode: vec![0x98],
+        op1: None,
+        op2: None,
         imm: None,
     }
     .into_raw()
@@ -495,7 +669,7 @@ pub fn cmp_first_reg_and_imm(
         opcode: vec![0x3d],
         op1: None,
         op2: None,
-        imm: Some(Imm(imm as u64, ImmByte::Bit32)),
+        imm: Some(Imm::from(imm)),
     }
     .into_raw()
     .encode()
@@ -587,6 +761,50 @@ pub fn cmps(long_mode: bool) -> Vec<u8> {
     .encode()
 }
 
+/// ## call
+
+pub fn call_relative_addr(label: String) -> CallInst {
+    let opcodes = Inst {
+        atomic: false,
+        long_mode: false,
+        opcode: vec![0xe9],
+        op1: None,
+        op2: None,
+        imm: Some(Imm(0, ImmByte::Bit32)),
+    }
+    .into_raw()
+    .encode();
+    CallInst(JumpInst::from(opcodes, ImmByte::Bit32, label))
+}
+
+
+/// jit use it
+pub fn call_addr_literal(addr: Imm) -> Vec<u8> {
+    Inst {
+        atomic: false,
+        long_mode: false,
+        opcode: vec![0x9a],
+        op1: None,
+        op2: None,
+        imm: Some(addr),
+    }
+    .into_raw()
+    .encode()
+}
+
+pub fn call_reg(op1: Op1) -> Vec<u8> {
+    Inst {
+        atomic: false,
+        long_mode: false,
+        opcode: vec![0x9a],
+        op1: Some(op1),
+        op2: None,
+        imm: None,
+    }
+    .into_raw()
+    .encode()
+}
+
 /// ## jmp
 
 pub fn jmp(
@@ -605,7 +823,7 @@ pub fn jmp(
     JumpInst::from(opcodes, ImmByte::Bit32, label)
 }
 
-// jit use it
+/// jit use it
 pub fn jmp_addr_literal(addr: Imm) -> Vec<u8> {
     Inst {
         atomic: false,

@@ -5,7 +5,7 @@ use std::panic;
 
 use registers::{modrm, AddrMode, ScaledIndex, TargetReg, APPEND_SIB, Register32};
 
-use self::registers::sib;
+use self::registers::{Register64, sib};
 
 use super::ImmByte;
 
@@ -96,8 +96,8 @@ impl Op1 {
 #[derive(Debug, Clone, Copy)]
 pub struct Imm(u64, ImmByte);
 
-impl From<TargetReg> for Imm {
-    fn from(i: TargetReg) -> Self {
+impl From<Register64> for Imm {
+    fn from(i: Register64) -> Self {
         Self(i.reg_value() as u64, ImmByte::Bit8)
     }
 }
@@ -105,6 +105,30 @@ impl From<TargetReg> for Imm {
 impl From<Register32> for Imm {
     fn from(i: Register32) -> Self {
         Self(i as u64, ImmByte::Bit8)
+    }
+}
+
+impl From<u8> for Imm {
+    fn from(i: u8) -> Self {
+        Self(i as u64, ImmByte::Bit8)
+    }
+}
+
+impl From<u16> for Imm {
+    fn from(i: u16) -> Self {
+        Self(i as u64, ImmByte::Bit16)
+    }
+}
+
+impl From<u32> for Imm {
+    fn from(i: u32) -> Self {
+        Self(i as u64, ImmByte::Bit32)
+    }
+}
+
+impl From<u64> for Imm {
+    fn from(i: u64) -> Self {
+        Self(i, ImmByte::Bit64)
     }
 }
 

@@ -37,10 +37,15 @@ The 峨眉 (EMei) JIT/AOT backend framework.
 - jump
   - jmp
     - jmp to relative addr
-    - jmp to addr literal
+    - jmp to addr literal (jit use it)
     - jmp to register
   - jump cond code
     - /ja/jb/jc/je/jg/jl/jo/jp/js/jz/jae/jbe/jge/jle/jpe/jpo/jna/jnb/jnc/jne/jng/jnl/jno/jnp/jns/jnz/jnae/jnbe/jnge/jnle
+
+- call
+  - call to relative addr
+  - call to addr literal (jit use it)
+  - call to register
 
 - nop
   - nop(nop1)
