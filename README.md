@@ -34,6 +34,11 @@ The 峨眉 (EMei) JIT/AOT backend framework.
   - dec
   - dec_reg32
 
+- jump
+  - jmp
+  - jump cond code
+    - /ja/jb/jc/je/jg/jl/jo/jp/js/jz/jae/jbe/jge/jle/jpe/jpo/jna/jnb/jnc/jne/jng/jnl/jno/jnp/jns/jnz/jnae/jnbe/jnge/jnle
+
 - nop
   - nop(nop1)
   - nop1-9
