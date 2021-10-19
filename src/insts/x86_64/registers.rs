@@ -83,15 +83,6 @@ impl TargetReg {
             false
         }
     }
-
-    pub fn get_reg(&self) -> Register32 {
-        let v = *self as u8;
-        if v >= 8 {
-            panic!("x86 target is not support 64bit extend register");
-        } else {
-            Register32::from(v)
-        }
-    }
 }
 
 #[cfg(target_arch = "x86_64")]
@@ -104,13 +95,19 @@ impl TargetReg {
             false
         }
     }
+}
 
+impl Register64 {
     pub fn get_reg(&self) -> Register32 {
+        Register32::from(self.reg_value())
+    }
+
+    pub fn reg_value(&self) -> u8 {
         let v = *self as u8;
         if v >= 8 {
-            Register32::from(v - 8)
+            v - 8
         } else {
-            Register32::from(v)
+            v
         }
     }
 }

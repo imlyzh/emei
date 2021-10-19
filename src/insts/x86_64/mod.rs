@@ -3,7 +3,7 @@ pub mod registers;
 
 use std::panic;
 
-use registers::{modrm, AddrMode, ScaledIndex, TargetReg, APPEND_SIB};
+use registers::{modrm, AddrMode, ScaledIndex, TargetReg, APPEND_SIB, Register32};
 
 use self::registers::sib;
 
@@ -94,8 +94,29 @@ impl Op1 {
 }
 
 #[derive(Debug, Clone, Copy)]
+pub struct Imm(u64, ImmByte);
+
+impl From<TargetReg> for Imm {
+    fn from(i: TargetReg) -> Self {
+        Self(i.reg_value() as u64, ImmByte::Bit8)
+    }
+}
+
+impl From<Register32> for Imm {
+    fn from(i: Register32) -> Self {
+        Self(i as u64, ImmByte::Bit8)
+    }
+}
+
+impl Imm {
+    pub fn get_imm(&self) -> Vec<u8> {
+        self.1.encode(self.0)
+    }
+}
+
+#[derive(Debug, Clone, Copy)]
 pub enum Op2 {
-    Imm(u64, ImmByte),
+    Imm(Imm),
     Reg(TargetReg),
 }
 
@@ -110,7 +131,7 @@ impl Op2 {
 impl Op2 {
     fn rex_value(&self) -> u8 {
         match self {
-            Op2::Imm(_, _) => 0,
+            Op2::Imm(Imm(_, _)) => 0,
             Op2::Reg(r) => if r.is_extend() {
                 REX_R
             } else {
@@ -125,7 +146,8 @@ pub struct Inst {
     pub long_mode: bool,
     pub opcode: Vec<u8>, // 0~2bytes
     pub op1: Option<Op1>,
-    pub op2: Option<Op2>,
+    pub op2: Option<TargetReg>,
+    pub imm: Option<Imm>,
 }
 
 impl Inst {
@@ -136,6 +158,7 @@ impl Inst {
             opcode: opcode.to_vec(),
             op1: None,
             op2: None,
+            imm: None,
         }
     }
 }
@@ -150,7 +173,7 @@ impl Inst {
         };
         let opcode = if self.long_mode {
             let op1_rex = self.op1.map(|op1| op1.rex_value()).unwrap_or(0);
-            let op2_rex = self.op2.map(|op2| op2.rex_value()).unwrap_or(0);
+            let op2_rex = self.op2.map(|op2| op2.reg_value()).unwrap_or(0);
             // warning! this logic is not tested
             let op2_rex = if self.op1.is_none() {
                 REX_B
@@ -163,24 +186,22 @@ impl Inst {
         } else {
             self.opcode
         };
-        let (mod_rm, sib, disp, imm) = match (self.op1, self.op2) {
-            (None, None) => (None, None, vec![], vec![]),
-            (None, Some(Op2::Imm(value, imm_byte))) => {
-                (None, None, vec![], imm_byte.encode(value))
-            }
-            (None, Some(Op2::Reg(op2))) => (None, None, vec![], vec![op2 as u8]),
+        let (mod_rm, sib, disp) = match (self.op1, self.op2) {
+            (None, None) => (None, None, vec![]),
+            (None, Some(op2)) => panic!("unsupport None, reg instruction"), //(None, None, vec![], vec![op2 as u8]),
             (Some(op1), None) => {
                 let (mod_rm, sib, disp) = op1.to_modrm_sib_disp(TargetReg::from(0));
-                (Some(mod_rm), sib, disp, vec![])
+                (Some(mod_rm), sib, disp)
             }
-            (Some(op1), Some(Op2::Reg(op2))) => {
+            (Some(op1), Some(op2)) => {
                 let (mod_rm, sib, disp) = op1.to_modrm_sib_disp(op2);
-                (Some(mod_rm), sib, disp, vec![])
+                (Some(mod_rm), sib, disp)
             }
-            (Some(op1), Some(Op2::Imm(value, imm_byte))) => {
-                let (mod_rm, sib, disp) = op1.to_modrm_sib_disp(TargetReg::from(0));
-                (Some(mod_rm), sib, disp, imm_byte.encode(value))
-            }
+        };
+        let imm = if let Some(imm) = self.imm {
+            imm.get_imm()
+        } else {
+            vec![]
         };
         RawInst {
             prefixes,
