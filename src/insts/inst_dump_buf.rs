@@ -37,10 +37,7 @@ impl JumpInst {
 }
 
 #[derive(Debug, Clone)]
-pub enum LinkError {
-    LabelNotFound(String),
-    FunctionNotFound(String),
-}
+pub struct LinkError(pub String);
 
 #[derive(Debug, Clone)]
 pub enum InstUnit {
@@ -90,7 +87,7 @@ impl InstBuffer {
                     buf.extend(i.iter());
                 },
                 InstUnit::JumpInst(j) => {
-                    let obj = self.label_buf.borrow().get(&j.label).cloned().ok_or(LinkError::LabelNotFound(j.label.clone()))?;
+                    let obj = self.label_buf.borrow().get(&j.label).cloned().ok_or(LinkError(j.label.clone()))?;
                     let obj = base_addr + obj;
                     buf.extend(j.opcodes[..j.modify_range.0].iter());
                     buf.extend(obj.to_ne_bytes());
