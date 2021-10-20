@@ -1,10 +1,13 @@
-use std::{borrow::Borrow, cell::RefCell, collections::HashMap, ops::{AddAssign, DerefMut}};
+use std::{cell::RefCell, collections::HashMap, ops::{AddAssign, DerefMut}};
 
 use crate::insts::ImmByte;
 
 
+/*
 #[derive(Debug, Clone, Default)]
 pub struct CallInst(pub JumpInst);
+
+*/
 
 #[derive(Debug, Clone, Default)]
 pub struct JumpInst {
@@ -43,7 +46,7 @@ pub enum LinkError {
 pub enum InstUnit {
     Inst(Vec<u8>),
     JumpInst(JumpInst),
-    CallInst(CallInst),
+    // CallInst(CallInst),
 }
 
 impl InstUnit {
@@ -51,7 +54,7 @@ impl InstUnit {
         match self {
             InstUnit::Inst(inst) => inst.len(),
             InstUnit::JumpInst(jump_inst) => jump_inst.len(),
-            InstUnit::CallInst(call_inst) => call_inst.0.len(),
+            // InstUnit::CallInst(call_inst) => call_inst.0.len(),
         }
     }
 }
@@ -80,7 +83,7 @@ impl InstBuffer {
         self.label_buf.borrow_mut().insert(label, self.offset.borrow().clone());
     }
 
-    pub fn dump(&self, buf: &mut Vec<u8>, base_addr: u32, fun_table: &HashMap<String, u32>) -> Result<(), LinkError> {
+    pub fn dump(&self, base_addr: u32, buf: &mut Vec<u8>) -> Result<(), LinkError> {
         for inst in self.buf.borrow().iter() {
             match inst {
                 InstUnit::Inst(i) => {
@@ -93,6 +96,7 @@ impl InstBuffer {
                     buf.extend(obj.to_ne_bytes());
                     buf.extend(j.opcodes[j.modify_range.1..].iter());
                 }
+                /*
                 InstUnit::CallInst(j) => {
                     let j = &j.0;
                     let obj = fun_table.get(&j.label).ok_or(LinkError::FunctionNotFound(j.label.clone()))?;
@@ -100,6 +104,7 @@ impl InstBuffer {
                     buf.extend(obj.to_ne_bytes());
                     buf.extend(j.opcodes[j.modify_range.1..].iter());
                 }
+                 */
             }
         }
         Ok(())

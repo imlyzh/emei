@@ -1,6 +1,6 @@
-use crate::insts::{ImmByte, inst_dump_buf::{CallInst, JumpInst}, x86_64::Imm};
+use crate::insts::{ImmByte, inst_dump_buf::JumpInst, x86_64::Imm};
 
-use super::{registers::*, Inst, Op1, Op2};
+use super::{registers::*, Inst, Op1};
 
 /// ## mov
 /// - mov
@@ -763,7 +763,7 @@ pub fn cmps(long_mode: bool) -> Vec<u8> {
 
 /// ## call
 
-pub fn call_relative_addr(label: String) -> CallInst {
+pub fn call_relative_addr(label: String) -> JumpInst {
     let opcodes = Inst {
         atomic: false,
         long_mode: false,
@@ -774,7 +774,7 @@ pub fn call_relative_addr(label: String) -> CallInst {
     }
     .into_raw()
     .encode();
-    CallInst(JumpInst::from(opcodes, ImmByte::Bit32, label))
+    JumpInst::from(opcodes, ImmByte::Bit32, label)
 }
 
 
@@ -807,9 +807,7 @@ pub fn call_reg(op1: Op1) -> Vec<u8> {
 
 /// ## jmp
 
-pub fn jmp(
-    label: String
-) -> JumpInst {
+pub fn jmp(label: String) -> JumpInst {
     let opcodes = Inst {
         atomic: false,
         long_mode: false,
@@ -835,6 +833,21 @@ pub fn jmp_addr_literal(addr: Imm) -> Vec<u8> {
     }
     .into_raw()
     .encode()
+}
+
+/// runtime_symbol only
+pub fn jmp_to_runtime_symbol(label: String) -> JumpInst {
+    let opcodes =Inst {
+        atomic: false,
+        long_mode: false,
+        opcode: vec![0xea],
+        op1: None,
+        op2: None,
+        imm: Some(Imm(0, ImmByte::Bit32)),
+    }
+    .into_raw()
+    .encode();
+    JumpInst::from(opcodes, ImmByte::Bit32, label)
 }
 
 pub fn jmp_to_reg(

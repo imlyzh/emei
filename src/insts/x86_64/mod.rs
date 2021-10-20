@@ -138,33 +138,6 @@ impl Imm {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
-pub enum Op2 {
-    Imm(Imm),
-    Reg(TargetReg),
-}
-
-#[cfg(target_arch = "x86")]
-impl Op2 {
-    fn rex_value(&self) -> u8 {
-        0
-    }
-}
-
-#[cfg(target_arch = "x86_64")]
-impl Op2 {
-    fn rex_value(&self) -> u8 {
-        match self {
-            Op2::Imm(Imm(_, _)) => 0,
-            Op2::Reg(r) => if r.is_extend() {
-                REX_R
-            } else {
-                0
-            },
-        }
-    }
-}
-
 pub struct Inst {
     pub atomic: bool,
     pub long_mode: bool,
@@ -212,7 +185,7 @@ impl Inst {
         };
         let (mod_rm, sib, disp) = match (self.op1, self.op2) {
             (None, None) => (None, None, vec![]),
-            (None, Some(op2)) => panic!("unsupport None, reg instruction"), //(None, None, vec![], vec![op2 as u8]),
+            (None, Some(_op2)) => panic!("unsupport None, reg instruction"), //(None, None, vec![], vec![op2 as u8]),
             (Some(op1), None) => {
                 let (mod_rm, sib, disp) = op1.to_modrm_sib_disp(TargetReg::from(0));
                 (Some(mod_rm), sib, disp)
