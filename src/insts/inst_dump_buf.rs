@@ -80,19 +80,7 @@ impl InstBuffer {
         self.label_buf.borrow_mut().insert(label, self.offset.borrow().clone());
     }
 
-    pub fn dump_to_mem(&self, buf: &mut Vec<u8>) {
-        for inst in self.buf.borrow().iter() {
-            match inst {
-                InstUnit::Inst(i) => {
-                    buf.extend(i.iter());
-                },
-                InstUnit::JumpInst(_) => panic!("JumpInst is not supported"),
-                InstUnit::CallInst(_) => panic!("CallInst is not supported"),
-            }
-        }
-    }
-
-    pub fn dump_to_file(&self, buf: &mut Vec<u8>, base_addr: u32, fun_table: &HashMap<String, u32>) -> Result<(), LinkError> {
+    pub fn dump(&self, buf: &mut Vec<u8>, base_addr: u32, fun_table: &HashMap<String, u32>) -> Result<(), LinkError> {
         for inst in self.buf.borrow().iter() {
             match inst {
                 InstUnit::Inst(i) => {
@@ -113,29 +101,6 @@ impl InstBuffer {
                     buf.extend(j.opcodes[j.modify_range.1..].iter());
                 }
             }
-        }
-        Ok(())
-    }
-}
-
-#[derive(Debug, Clone, Default)]
-pub struct FuncBuffer {
-    pub buf: RefCell<Vec<(InstBuffer, u32)>>,
-    pub label_buf: RefCell<HashMap<String, u32>>,
-    pub offset: RefCell<u32>
-}
-
-impl FuncBuffer {
-    pub fn add_fun(&self, fun_name: &str, i: InstBuffer) {
-        self.label_buf.borrow_mut().insert(fun_name.to_string(), self.offset.borrow().clone());
-        let add_offset = i.len() as u32;
-        self.buf.borrow_mut().push((i, self.offset.borrow().clone()));
-        self.offset.borrow_mut().deref_mut().add_assign(add_offset);
-    }
-
-    pub fn dump_to_file(&self, buf: &mut Vec<u8>) -> Result<(), LinkError> {
-        for (insts, base_addr) in self.buf.borrow().iter() {
-            insts.dump_to_file(buf, *base_addr, &self.label_buf.borrow())?;
         }
         Ok(())
     }
