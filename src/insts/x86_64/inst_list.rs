@@ -1,4 +1,4 @@
-use crate::insts::{ImmByte, inst_dump_buf::JumpInst, x86_64::Imm};
+use crate::insts::{ImmByte, inst_dump_buf::JumpInst, x86_64::{Imm, SSEInst}};
 
 use super::{registers::*, Inst, Op1};
 
@@ -1233,6 +1233,255 @@ pub fn far_ret_imm16(imm: u16) -> Vec<u8> {
         op1: None,
         op2: None,
         imm: Some(Imm(imm as u64, ImmByte::Bit16)),
+    }
+    .into_raw()
+    .encode()
+}
+
+
+/// ## SSE inst
+
+/// - movss
+/// movss xmm1, xmm2/m32
+/// Merge scalar single-precision floating-point value from xmm2 to xmm1 register.
+/// Load scalar single-precision floating-point value from m32 to xmm1 register.
+pub fn movss(
+    op1: Op1,
+    op2: RegisterXmm,
+) -> Vec<u8> {
+    SSEInst {
+        opcode: vec![0xf3, 0x0f, 0x10],
+        op1: Some(op1),
+        op2: Some(TargetReg::from(op2 as u8)),
+        imm: None,
+    }
+    .into_raw()
+    .encode()
+}
+
+/// - movss_rev
+/// movss xmm2/m32, xmm1
+pub fn movss_rev(
+    op1: Op1,
+    op2: RegisterXmm,
+) -> Vec<u8> {
+    SSEInst {
+        opcode: vec![0xf3, 0x0f, 0x11],
+        op1: Some(op1),
+        op2: Some(TargetReg::from(op2 as u8)),
+        imm: None,
+    }
+    .into_raw()
+    .encode()
+}
+
+/// - movsd
+/// movsd xmm1, xmm2/m32
+/// Move scalar double-precision floating-point value from xmm2 to xmm1 register.
+/// Load scalar double-precision floating-point value from m64 to xmm1 register.
+pub fn movsd(
+    op1: Op1,
+    op2: RegisterXmm,
+) -> Vec<u8> {
+    SSEInst {
+        opcode: vec![0xf2, 0x0f, 0x10],
+        op1: Some(op1),
+        op2: Some(TargetReg::from(op2 as u8)),
+        imm: None,
+    }
+    .into_raw()
+    .encode()
+}
+
+/// - movsd_rev
+/// movsd xmm2/m32, xmm1
+pub fn movsd_rev(
+    op1: Op1,
+    op2: RegisterXmm,
+) -> Vec<u8> {
+    SSEInst {
+        opcode: vec![0xf2, 0x0f, 0x11],
+        op1: Some(op1),
+        op2: Some(TargetReg::from(op2 as u8)),
+        imm: None,
+    }
+    .into_raw()
+    .encode()
+}
+
+/// - addss
+/// addss xmm1, xmm2/m32
+/// Add scalar single-precision floating-point value from xmm2 to xmm1 register.
+pub fn addss(
+    op1: Op1,
+    op2: RegisterXmm
+) -> Vec<u8> {
+    SSEInst {
+        opcode: vec![0xf3, 0x0f, 0x58],
+        op1: Some(op1),
+        op2: Some(TargetReg::from(op2 as u8)),
+        imm: None,
+    }
+    .into_raw()
+    .encode()
+}
+
+/// - addsd
+/// addsd xmm1, xmm2/m64
+/// Add scalar double-precision floating-point value from xmm2 to xmm1 register.
+pub fn addsd(
+    op1: Op1,
+    op2: RegisterXmm
+) -> Vec<u8> {
+    SSEInst {
+        opcode: vec![0xf2, 0x0f, 0x58],
+        op1: Some(op1),
+        op2: Some(TargetReg::from(op2 as u8)),
+        imm: None,
+    }
+    .into_raw()
+    .encode()
+}
+
+pub fn subss(
+    op1: Op1,
+    op2: RegisterXmm
+) -> Vec<u8> {
+    SSEInst {
+        opcode: vec![0xf3, 0x0f, 0x5c],
+        op1: Some(op1),
+        op2: Some(TargetReg::from(op2 as u8)),
+        imm: None,
+    }
+    .into_raw()
+    .encode()
+}
+
+pub fn subsd(
+    op1: Op1,
+    op2: RegisterXmm
+) -> Vec<u8> {
+    SSEInst {
+        opcode: vec![0xf2, 0x0f, 0x5c],
+        op1: Some(op1),
+        op2: Some(TargetReg::from(op2 as u8)),
+        imm: None,
+    }
+    .into_raw()
+    .encode()
+}
+
+pub fn mulss(
+    op1: Op1,
+    op2: RegisterXmm
+) -> Vec<u8> {
+    SSEInst {
+        opcode: vec![0xf3, 0x0f, 0x59],
+        op1: Some(op1),
+        op2: Some(TargetReg::from(op2 as u8)),
+        imm: None,
+    }
+    .into_raw()
+    .encode()
+}
+
+pub fn mulsd(
+    op1: Op1,
+    op2: RegisterXmm
+) -> Vec<u8> {
+    SSEInst {
+        opcode: vec![0xf2, 0x0f, 0x59],
+        op1: Some(op1),
+        op2: Some(TargetReg::from(op2 as u8)),
+        imm: None,
+    }
+    .into_raw()
+    .encode()
+}
+
+pub fn divss(
+    op1: Op1,
+    op2: RegisterXmm
+) -> Vec<u8> {
+    SSEInst {
+        opcode: vec![0xf3, 0x0f, 0x5e],
+        op1: Some(op1),
+        op2: Some(TargetReg::from(op2 as u8)),
+        imm: None,
+    }
+    .into_raw()
+    .encode()
+}
+
+pub fn divsd(
+    op1: Op1,
+    op2: RegisterXmm
+) -> Vec<u8> {
+    SSEInst {
+        opcode: vec![0xf2, 0x0f, 0x5e],
+        op1: Some(op1),
+        op2: Some(TargetReg::from(op2 as u8)),
+        imm: None,
+    }
+    .into_raw()
+    .encode()
+}
+
+#[repr(u8)]
+pub enum FcmpOp {
+    EQ = 0,
+    LT = 1,
+    LE = 2,
+    UNORD = 3,
+    NEQ = 4,
+    NLT = 5,
+    NLE = 6,
+    ORD = 7,
+}
+
+pub fn cmpss(
+    op1: Op1,
+    op2: RegisterXmm,
+    imm: FcmpOp
+) -> Vec<u8> {
+    SSEInst {
+        opcode: vec![0xf3, 0x0f, 0xC2],
+        op1: Some(op1),
+        op2: Some(TargetReg::from(op2 as u8)),
+        imm: Some(Imm(imm as u64, ImmByte::Bit8)),
+    }
+    .into_raw()
+    .encode()
+}
+
+pub fn cmpsd(
+    op1: Op1,
+    op2: RegisterXmm,
+    imm: FcmpOp
+) -> Vec<u8> {
+    SSEInst {
+        opcode: vec![0xf2, 0x0f, 0xC2],
+        op1: Some(op1),
+        op2: Some(TargetReg::from(op2 as u8)),
+        imm: Some(Imm(imm as u64, ImmByte::Bit8)),
+    }
+    .into_raw()
+    .encode()
+}
+
+/// - sqrtss
+/// sqrtss xmm1, xmm2/m32
+/// Compute square root of scalar single-precision floating-point value in xmm2 and store result in xmm1.
+/// Compute square root of scalar single-precision floating-point value in m32 and store result in xmm1.
+pub fn sqrtss(
+    op1: Op1,
+    op2: RegisterXmm
+) -> Vec<u8> {
+    SSEInst {
+        opcode: vec![0xf3, 0x0f, 0x51],
+        op1: Some(op1),
+        op2: Some(TargetReg::from(op2 as u8)),
+        imm: None,
     }
     .into_raw()
     .encode()

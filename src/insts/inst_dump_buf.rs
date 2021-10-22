@@ -72,10 +72,12 @@ impl InstBuffer {
         self.offset.borrow_mut().deref_mut().add_assign(i.len() as u32);
         self.buf.borrow_mut().push(InstUnit::Inst(i));
     }
+
     pub fn jump(&self, i: JumpInst) {
         self.offset.borrow_mut().deref_mut().add_assign(i.len() as u32);
         self.buf.borrow_mut().push(InstUnit::JumpInst(i));
     }
+
     pub fn label(&self, label: String) {
         self.label_buf.borrow_mut().insert(label, self.offset.borrow().clone());
     }

@@ -6,6 +6,8 @@ The 峨眉 (EMei) JIT/AOT backend framework.
 
 ### x86_64
 
+warning: ***unsupport fpu float operator***.
+
 - mov
   - mov
   - mov_zero_extend_bit8/16
@@ -55,6 +57,15 @@ The 峨眉 (EMei) JIT/AOT backend framework.
   - near_ret/near_ret_imm
   - far_ret/far_ret_imm
 
+#### sse float instruction
+
+- movss/movsd
+- addss/addsd
+- subss/subsd
+- mulss/mulsd
+- divss/divsd
+- sqrtss/sqrtsd
+
 ## Example
 
-**lock src/main.rs**.
+**look src/main.rs**.

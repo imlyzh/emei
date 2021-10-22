@@ -3,7 +3,7 @@ pub mod registers;
 
 use std::panic;
 
-use registers::{modrm, AddrMode, ScaledIndex, TargetReg, APPEND_SIB, Register32};
+use registers::{modrm, AddrMode, ScaledIndex, TargetReg, APPEND_SIB, Register32, RegisterXmm};
 
 use self::registers::{Register64, sib};
 
@@ -211,13 +211,34 @@ impl Inst {
     }
 }
 
+pub struct SSEInst {
+    pub opcode: Vec<u8>,
+    pub op1: Option<Op1>,
+    pub op2: Option<TargetReg>,
+    pub imm: Option<Imm>,
+}
+
+impl SSEInst {
+    #[inline]
+    fn into_raw(self) -> RawInst {
+        Inst {
+            atomic: false,
+            long_mode: false,
+            opcode: self.opcode,
+            op1: self.op1,
+            op2: self.op2,
+            imm: self.imm,
+        }.into_raw()
+    }
+}
+
 pub struct RawInst {
-    pub prefixes: Vec<u8>, // 0~4bytes
-    pub opcode: Vec<u8>,   // 0~3bytes
+    pub prefixes: Vec<u8>,  // 0~4bytes
+    pub opcode: Vec<u8>,    // 0~3bytes
     pub modrm: Option<ModRM>,
     pub sib: Option<Sib>,
-    pub disp: Vec<u8>, // 1/2/4bytes
-    pub imm: Vec<u8>,  // 1/2/4bytes
+    pub disp: Vec<u8>,      // 1/2/4bytes
+    pub imm: Vec<u8>,       // 1/2/4bytes
 }
 
 impl RawInst {
