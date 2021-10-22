@@ -44,6 +44,10 @@ warning: ***unsupport fpu float operator***.
   - jump cond code
     - /ja/jb/jc/je/jg/jl/jo/jp/js/jz/jae/jbe/jge/jle/jpe/jpo/jna/jnb/jnc/jne/jng/jnl/jno/jnp/jns/jnz/jnae/jnbe/jnge/jnle
 
+- cmp
+
+- test
+
 - call
   - call to relative addr
   - call to addr literal (jit use it)
@@ -56,6 +60,20 @@ warning: ***unsupport fpu float operator***.
 - ret
   - near_ret/near_ret_imm
   - far_ret/far_ret_imm
+
+...etc.
+
+#### about headware inference
+
+- int
+  - intn
+  - into
+  - int3
+  - int1
+
+- syscall
+  - syscall
+  - sysenter
 
 #### sse float instruction
 

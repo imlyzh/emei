@@ -761,7 +761,200 @@ pub fn cmps(long_mode: bool) -> Vec<u8> {
     .encode()
 }
 
-/// ## call
+/// - test_first_reg
+
+pub fn test_first_reg_and_imm8(imm: u8) -> Vec<u8> {
+    Inst {
+        atomic: false,
+        long_mode: false,
+        opcode: vec![0xa8],
+        op1: None,
+        op2: None,
+        imm: Some(Imm(imm as u64, ImmByte::Bit8)),
+    }
+    .into_raw()
+    .encode()
+}
+
+pub fn test_first_reg(
+    long_mode: bool,
+    imm: Imm
+) -> Vec<u8> {
+    Inst {
+        atomic: false,
+        long_mode,
+        opcode: vec![0xa9],
+        op1: None,
+        op2: None,
+        imm: Some(imm),
+    }
+    .into_raw()
+    .encode()
+}
+
+pub fn test_imm8(
+    long_mode: bool,
+    op1: Op1,
+    imm: u8
+) -> Vec<u8> {
+    Inst {
+        atomic: false,
+        long_mode,
+        opcode: vec![0xf6, 0],
+        op1: Some(op1),
+        op2: None,
+        imm: Some(Imm(imm as u64, ImmByte::Bit8)),
+    }
+    .into_raw()
+    .encode()
+}
+
+/// - test_imm: Test imm32 [with r/m32 | sign-extended to 64-bits with r/m64]
+pub fn test_imm(
+    long_mode: bool,
+    op1: Op1,
+    op2: TargetReg,
+    imm: u32
+) -> Vec<u8> {
+    Inst {
+        atomic: false,
+        long_mode,
+        opcode: vec![0xf7, 0],
+        op1: Some(op1),
+        op2: Some(op2),
+        imm: Some(Imm(imm as u64, ImmByte::Bit32)),
+    }
+    .into_raw()
+    .encode()
+}
+
+// - test_u8
+pub fn test_u8(
+    long_mode: bool,
+    op1: Op1,
+    op2: TargetReg,
+) -> Vec<u8> {
+    Inst {
+        atomic: false,
+        long_mode,
+        opcode: vec![0x84],
+        op1: Some(op1),
+        op2: Some(op2),
+        imm: None,
+    }
+    .into_raw()
+    .encode()
+}
+
+/// - test
+pub fn test(
+    long_mode: bool,
+    op1: Op1,
+    op2: TargetReg
+) -> Vec<u8> {
+    Inst {
+        atomic: false,
+        long_mode,
+        opcode: vec![0x85],
+        op1: Some(op1),
+        op2: Some(op2),
+        imm: None,
+    }
+    .into_raw()
+    .encode()
+}
+
+/// - int1
+#[inline]
+pub fn int1() -> Vec<u8> {
+    Inst {
+        atomic: false,
+        long_mode: false,
+        opcode: vec![0xf1],
+        op1: None,
+        op2: None,
+        imm: None,
+    }
+    .into_raw()
+    .encode()
+}
+
+/// - int3
+#[inline]
+pub fn int3() -> Vec<u8> {
+    Inst {
+        atomic: false,
+        long_mode: false,
+        opcode: vec![0xcc],
+        op1: None,
+        op2: None,
+        imm: None,
+    }
+    .into_raw()
+    .encode()
+}
+
+/// - int
+#[inline]
+pub fn int(imm: u8) -> Vec<u8> {
+    Inst {
+        atomic: false,
+        long_mode: false,
+        opcode: vec![0xcd],
+        op1: None,
+        op2: None,
+        imm: Some(Imm::from(imm)),
+    }
+    .into_raw()
+    .encode()
+}
+
+/// - into
+#[inline]
+pub fn into() -> Vec<u8> {
+    Inst {
+        atomic: false,
+        long_mode: false,
+        opcode: vec![0xce],
+        op1: None,
+        op2: None,
+        imm: None,
+    }
+    .into_raw()
+    .encode()
+}
+
+/// - syscall
+#[inline]
+pub fn syscall() -> Vec<u8> {
+    Inst {
+        atomic: false,
+        long_mode: false,
+        opcode: vec![0x0f, 0x05],
+        op1: None,
+        op2: None,
+        imm: None,
+    }
+    .into_raw()
+    .encode()
+}
+
+/// - sysenter
+#[inline]
+pub fn sysenter() -> Vec<u8> {
+    Inst {
+        atomic: false,
+        long_mode: false,
+        opcode: vec![0x0f, 0x34],
+        op1: None,
+        op2: None,
+        imm: None,
+    }
+    .into_raw()
+    .encode()
+}
+
+/// - call
 
 pub fn call_relative_addr(label: String) -> JumpInst {
     let opcodes = Inst {
