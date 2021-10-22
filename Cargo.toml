@@ -1,6 +1,6 @@
 [package]
 name = "emei"
-license = "GPL3"
+license = "GPL-3.0"
 version = "0.1.0"
 authors = ["Lyzh <enterindex@gmail.com>"]
 edition = "2021"
