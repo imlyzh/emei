@@ -1343,6 +1343,9 @@ pub fn addsd(
     .encode()
 }
 
+/// - subss
+/// subss xmm1, xmm2/m32
+/// Subtract scalar single-precision floating-point value from xmm2 from xmm1 register.
 pub fn subss(
     op1: Op1,
     op2: RegisterXmm
@@ -1357,6 +1360,9 @@ pub fn subss(
     .encode()
 }
 
+/// - subsd
+/// subsd xmm1, xmm2/m64
+/// Subtract scalar double-precision floating-point value from xmm2 from xmm1 register.
 pub fn subsd(
     op1: Op1,
     op2: RegisterXmm
@@ -1371,6 +1377,9 @@ pub fn subsd(
     .encode()
 }
 
+/// - mulss
+/// mulss xmm1, xmm2/m32
+/// Multiply scalar single-precision floating-point value from xmm2 to xmm1 register.
 pub fn mulss(
     op1: Op1,
     op2: RegisterXmm
@@ -1385,6 +1394,9 @@ pub fn mulss(
     .encode()
 }
 
+/// - mulsd
+/// mulsd xmm1, xmm2/m64
+/// Multiply scalar double-precision floating-point value from xmm2 to xmm1 register.
 pub fn mulsd(
     op1: Op1,
     op2: RegisterXmm
@@ -1399,6 +1411,9 @@ pub fn mulsd(
     .encode()
 }
 
+/// - divss
+/// divss xmm1, xmm2/m32
+/// Divide scalar single-precision floating-point value from xmm2 by xmm1 register.
 pub fn divss(
     op1: Op1,
     op2: RegisterXmm
@@ -1413,6 +1428,9 @@ pub fn divss(
     .encode()
 }
 
+/// - divsd
+/// divsd xmm1, xmm2/m64
+/// Divide scalar double-precision floating-point value from xmm2 by xmm1 register.
 pub fn divsd(
     op1: Op1,
     op2: RegisterXmm
@@ -1427,6 +1445,7 @@ pub fn divsd(
     .encode()
 }
 
+/// - sqrtss/sqrtsd operations
 #[repr(u8)]
 pub enum FcmpOp {
     EQ = 0,
@@ -1439,6 +1458,9 @@ pub enum FcmpOp {
     ORD = 7,
 }
 
+/// - cmpss
+/// cmpss xmm1, xmm2/m32
+/// Compare scalar single-precision floating-point value from xmm2 to xmm1 register.
 pub fn cmpss(
     op1: Op1,
     op2: RegisterXmm,
@@ -1454,6 +1476,9 @@ pub fn cmpss(
     .encode()
 }
 
+/// - cmpsd
+/// cmpsd xmm1, xmm2/m64
+/// Compare scalar double-precision floating-point value from xmm2 to xmm1 register.
 pub fn cmpsd(
     op1: Op1,
     op2: RegisterXmm,
@@ -1472,7 +1497,6 @@ pub fn cmpsd(
 /// - sqrtss
 /// sqrtss xmm1, xmm2/m32
 /// Compute square root of scalar single-precision floating-point value in xmm2 and store result in xmm1.
-/// Compute square root of scalar single-precision floating-point value in m32 and store result in xmm1.
 pub fn sqrtss(
     op1: Op1,
     op2: RegisterXmm

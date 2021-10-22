@@ -65,6 +65,7 @@ warning: ***unsupport fpu float operator***.
 - mulss/mulsd
 - divss/divsd
 - sqrtss/sqrtsd
+- cmpss/cmpsd
 
 ## Example
 
