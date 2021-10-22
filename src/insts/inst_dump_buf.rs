@@ -1,7 +1,10 @@
-use std::{cell::RefCell, collections::HashMap, ops::{AddAssign, DerefMut}};
+use std::{
+    cell::RefCell,
+    collections::HashMap,
+    ops::{AddAssign, DerefMut},
+};
 
 use crate::insts::ImmByte;
-
 
 /*
 #[derive(Debug, Clone, Default)]
@@ -19,12 +22,13 @@ pub struct JumpInst {
 impl JumpInst {
     pub fn from(opcodes: Vec<u8>, imm_byte: ImmByte, label: String) -> Self {
         let right = opcodes.len();
-        let left = right - match imm_byte {
-            ImmByte::Bit8 => 1,
-            ImmByte::Bit16 => 2,
-            ImmByte::Bit32 => 4,
-            ImmByte::Bit64 => 8,
-        };
+        let left = right
+            - match imm_byte {
+                ImmByte::Bit8 => 1,
+                ImmByte::Bit16 => 2,
+                ImmByte::Bit32 => 4,
+                ImmByte::Bit64 => 8,
+            };
         JumpInst {
             opcodes,
             label,
@@ -60,7 +64,7 @@ impl InstUnit {
 pub struct InstBuffer {
     pub buf: RefCell<Vec<InstUnit>>,
     pub label_buf: RefCell<HashMap<String, u32>>,
-    pub offset: RefCell<u32>
+    pub offset: RefCell<u32>,
 }
 
 impl InstBuffer {
@@ -69,17 +73,25 @@ impl InstBuffer {
     }
 
     pub fn inst(&self, i: Vec<u8>) {
-        self.offset.borrow_mut().deref_mut().add_assign(i.len() as u32);
+        self.offset
+            .borrow_mut()
+            .deref_mut()
+            .add_assign(i.len() as u32);
         self.buf.borrow_mut().push(InstUnit::Inst(i));
     }
 
     pub fn jump(&self, i: JumpInst) {
-        self.offset.borrow_mut().deref_mut().add_assign(i.len() as u32);
+        self.offset
+            .borrow_mut()
+            .deref_mut()
+            .add_assign(i.len() as u32);
         self.buf.borrow_mut().push(InstUnit::JumpInst(i));
     }
 
     pub fn label(&self, label: String) {
-        self.label_buf.borrow_mut().insert(label, self.offset.borrow().clone());
+        self.label_buf
+            .borrow_mut()
+            .insert(label, self.offset.borrow().clone());
     }
 
     pub fn dump(&self, base_addr: u32, buf: &mut Vec<u8>) -> Result<(), LinkError> {
@@ -87,23 +99,27 @@ impl InstBuffer {
             match inst {
                 InstUnit::Inst(i) => {
                     buf.extend(i.iter());
-                },
+                }
                 InstUnit::JumpInst(j) => {
-                    let obj = self.label_buf.borrow().get(&j.label).cloned().ok_or(LinkError(j.label.clone()))?;
+                    let obj = self
+                        .label_buf
+                        .borrow()
+                        .get(&j.label)
+                        .cloned()
+                        .ok_or(LinkError(j.label.clone()))?;
                     let obj = base_addr + obj;
                     buf.extend(j.opcodes[..j.modify_range.0].iter());
                     buf.extend(obj.to_ne_bytes());
                     buf.extend(j.opcodes[j.modify_range.1..].iter());
-                }
-                /*
-                InstUnit::CallInst(j) => {
-                    let j = &j.0;
-                    let obj = fun_table.get(&j.label).ok_or(LinkError::FunctionNotFound(j.label.clone()))?;
-                    buf.extend(j.opcodes[..j.modify_range.0].iter());
-                    buf.extend(obj.to_ne_bytes());
-                    buf.extend(j.opcodes[j.modify_range.1..].iter());
-                }
-                 */
+                } /*
+                  InstUnit::CallInst(j) => {
+                      let j = &j.0;
+                      let obj = fun_table.get(&j.label).ok_or(LinkError::FunctionNotFound(j.label.clone()))?;
+                      buf.extend(j.opcodes[..j.modify_range.0].iter());
+                      buf.extend(obj.to_ne_bytes());
+                      buf.extend(j.opcodes[j.modify_range.1..].iter());
+                  }
+                   */
             }
         }
         Ok(())

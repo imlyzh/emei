@@ -5,7 +5,7 @@ version = "0.1.0"
 authors = ["Lyzh <enterindex@gmail.com>"]
 edition = "2021"
 description = "The EMei JIT/AOT backend framework."
-repository = "https://github.com/imlyzh/sexpr_ir"
+repository = "https://github.com/imlyzh/emei"
 readme = "README.md"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html

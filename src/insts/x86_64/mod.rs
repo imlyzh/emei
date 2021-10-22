@@ -3,9 +3,9 @@ pub mod registers;
 
 use std::panic;
 
-use registers::{modrm, AddrMode, ScaledIndex, TargetReg, APPEND_SIB, Register32, RegisterXmm};
+use registers::{modrm, AddrMode, Register32, RegisterXmm, ScaledIndex, TargetReg, APPEND_SIB};
 
-use self::registers::{Register64, sib};
+use self::registers::{sib, Register64};
 
 use super::ImmByte;
 
@@ -21,7 +21,6 @@ const REX_W: u8 = 0b01001000; // 48
 const REX_R: u8 = 0b01000100; // 44
 const REX_X: u8 = 0b01000010; // 42
 const REX_B: u8 = 0b01000001; // 41
-
 
 ///////////////////////////////////////////////////////
 
@@ -46,13 +45,25 @@ impl Op1 {
 impl Op1 {
     fn rex_value(&self) -> u8 {
         match self {
-            Op1::Direct(r) => if r.is_extend() {REX_B} else {0},
-            Op1::DeRef(r, _) => if r.is_extend() {REX_B} else {0},
+            Op1::Direct(r) => {
+                if r.is_extend() {
+                    REX_B
+                } else {
+                    0
+                }
+            }
+            Op1::DeRef(r, _) => {
+                if r.is_extend() {
+                    REX_B
+                } else {
+                    0
+                }
+            }
             Op1::ScaleBase(baser, indexr, _, _) => {
-                let a = if baser.is_extend() {REX_B} else {0};
-                let b = if indexr.is_extend() {REX_X} else {0};
+                let a = if baser.is_extend() { REX_B } else { 0 };
+                let b = if indexr.is_extend() { REX_X } else { 0 };
                 a | b
-            },
+            }
         }
     }
 }
@@ -72,7 +83,11 @@ fn usize_boxed_length(u: usize) -> AddrMode {
 impl Op1 {
     pub fn to_modrm_sib_disp(self, src_reg: TargetReg) -> (ModRM, Option<Sib>, Vec<u8>) {
         match self {
-            Op1::Direct(reg) => (modrm(AddrMode::Direct, reg.get_reg(), src_reg.get_reg()), None, vec![]),
+            Op1::Direct(reg) => (
+                modrm(AddrMode::Direct, reg.get_reg(), src_reg.get_reg()),
+                None,
+                vec![],
+            ),
             Op1::DeRef(reg, disp) => {
                 let addr_mode = usize_boxed_length(disp);
                 (
@@ -88,7 +103,7 @@ impl Op1 {
                     Some(sib(base, scale, index)),
                     addr_mode.encode_disp(disp),
                 )
-            },
+            }
         }
     }
 }
@@ -172,11 +187,7 @@ impl Inst {
             let op1_rex = self.op1.map(|op1| op1.rex_value()).unwrap_or(0);
             let op2_rex = self.op2.map(|op2| op2.reg_value()).unwrap_or(0);
             // warning! this logic is not tested
-            let op2_rex = if self.op1.is_none() {
-                REX_B
-            } else {
-                op2_rex
-            };
+            let op2_rex = if self.op1.is_none() { REX_B } else { op2_rex };
             let mut r = vec![REX_W | op1_rex | op2_rex];
             r.extend(self.opcode);
             r
@@ -228,17 +239,18 @@ impl SSEInst {
             op1: self.op1,
             op2: self.op2,
             imm: self.imm,
-        }.into_raw()
+        }
+        .into_raw()
     }
 }
 
 pub struct RawInst {
-    pub prefixes: Vec<u8>,  // 0~4bytes
-    pub opcode: Vec<u8>,    // 0~3bytes
+    pub prefixes: Vec<u8>, // 0~4bytes
+    pub opcode: Vec<u8>,   // 0~3bytes
     pub modrm: Option<ModRM>,
     pub sib: Option<Sib>,
-    pub disp: Vec<u8>,      // 1/2/4bytes
-    pub imm: Vec<u8>,       // 1/2/4bytes
+    pub disp: Vec<u8>, // 1/2/4bytes
+    pub imm: Vec<u8>,  // 1/2/4bytes
 }
 
 impl RawInst {

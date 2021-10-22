@@ -1,5 +1,5 @@
-pub mod page_manage;
 pub mod insts;
+pub mod page_manage;
 
 macro_rules! debug_code_no_ret {
     ($code:expr) => {
@@ -12,7 +12,6 @@ macro_rules! debug_code_no_ret {
     };
 }
 
-
 #[test]
 #[cfg(target_arch = "x86_64")]
 fn x86_64_test() {
@@ -20,8 +19,8 @@ fn x86_64_test() {
     use insts::x86_64::registers::*;
     use insts::x86_64::Op1;
 
-    use crate::page_manage::PageSize;
     use crate::page_manage::PageHandle;
+    use crate::page_manage::PageSize;
 
     let r = mov(
         false,

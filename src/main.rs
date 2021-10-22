@@ -17,6 +17,4 @@ fn _history() {
     // println!("r:{:?}, r1:{:?}, r2:{:?}", r, r1, r2);
 }
 
-fn main() {
-
-}
+fn main() {}
