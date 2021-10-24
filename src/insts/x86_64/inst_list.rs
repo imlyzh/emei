@@ -272,6 +272,19 @@ pub fn add_rev(atomic: bool, long_mode: bool, op1: Op1, op2: TargetReg) -> Vec<u
     .encode()
 }
 
+pub fn lea(atomic: bool, long_mode: bool, op1: TargetReg, op2: TargetReg) -> Vec<u8> {
+    Inst {
+        atomic,
+        long_mode,
+        opcode: vec![0x8d],
+        op1: Some(Op1::Direct(op1)),
+        op2: Some(op2),
+        imm: None,
+    }
+    .into_raw()
+    .encode()
+}
+
 pub fn inc(atomic: bool, long_mode: bool, op1: Op1) -> Vec<u8> {
     Inst {
         atomic,
