@@ -11,7 +11,7 @@ pub fn mov(is_atomic: bool, is_long_mode: bool, op1: Op1, op2: TargetReg) -> Vec
     Inst {
         atomic: is_atomic,
         long_mode: is_long_mode,
-        opcode: vec![0x89],
+        opcode: &[0x89],
         op1: Some(op1),
         op2: Some(op2),
         imm: None,
@@ -29,7 +29,7 @@ pub fn mov_zero_extend_bit8(
     Inst {
         atomic: is_atomic,
         long_mode: is_long_mode,
-        opcode: vec![0x0f, 0xb6],
+        opcode: &[0x0f, 0xb6],
         op1: Some(op1),
         op2: Some(op2),
         imm: None,
@@ -47,7 +47,7 @@ pub fn mov_zero_extend_bit16(
     Inst {
         atomic: is_atomic,
         long_mode: is_long_mode,
-        opcode: vec![0x0f, 0xb7],
+        opcode: &[0x0f, 0xb7],
         op1: Some(op1),
         op2: Some(op2),
         imm: None,
@@ -65,7 +65,7 @@ pub fn mov_sign_extend_bit8(
     Inst {
         atomic: is_atomic,
         long_mode: is_long_mode,
-        opcode: vec![0x0f, 0xbe],
+        opcode: &[0x0f, 0xbe],
         op1: Some(op1),
         op2: Some(op2),
         imm: None,
@@ -83,7 +83,7 @@ pub fn mov_sign_extend_bit16(
     Inst {
         atomic: is_atomic,
         long_mode: is_long_mode,
-        opcode: vec![0x0f, 0xbf],
+        opcode: &[0x0f, 0xbf],
         op1: Some(op1),
         op2: Some(op2),
         imm: None,
@@ -101,7 +101,7 @@ pub fn mov_sign_extend_bit32(
     Inst {
         atomic: is_atomic,
         long_mode: is_long_mode,
-        opcode: vec![0x63],
+        opcode: &[0x63],
         op1: Some(op1),
         op2: Some(op2),
         imm: None,
@@ -116,7 +116,7 @@ pub fn mov_rev(is_atomic: bool, is_long_mode: bool, op1: Op1, op2: TargetReg) ->
     Inst {
         atomic: is_atomic,
         long_mode: is_long_mode,
-        opcode: vec![0x8b],
+        opcode: &[0x8b],
         op1: Some(op1),
         op2: Some(op2),
         imm: None,
@@ -135,7 +135,7 @@ pub fn mov_imm_into_reg(is_atomic: bool, is_long_mode: bool, op1: TargetReg, op2
     Inst {
         atomic: is_atomic,
         long_mode: is_long_mode,
-        opcode: vec![0xb8],
+        opcode: &[0xb8],
         op1: Some(Op1::Direct(op1)),
         op2: None,
         imm: Some(Imm(op2, imm_byte)),
@@ -153,7 +153,7 @@ pub fn imm_sign_extend_into_reg(
     Inst {
         atomic: is_atomic,
         long_mode: is_long_mode,
-        opcode: vec![0x7c],
+        opcode: &[0x7c],
         op1: Some(Op1::Direct(op1)),
         op2: None,
         imm: Some(Imm(op2, ImmByte::Bit32)),
@@ -174,7 +174,7 @@ pub fn push_reg(atomic: bool, reg: TargetReg) -> Vec<u8> {
     Inst {
         atomic,
         long_mode: false,
-        opcode: vec![0x60],
+        opcode: &[0x60],
         op1: None,
         op2: None,
         imm: Some(Imm(reg as u64, ImmByte::Bit8)),
@@ -188,7 +188,7 @@ pub fn push_imm(atomic: bool, imm: u32) -> Vec<u8> {
     Inst {
         atomic,
         long_mode: false,
-        opcode: vec![0x60],
+        opcode: &[0x60],
         op1: None,
         op2: None,
         imm: Some(Imm(imm as u64, ImmByte::Bit32)),
@@ -209,7 +209,7 @@ pub fn add_first_reg(atomic: bool, long_mode: bool, imm: u32) -> Vec<u8> {
     Inst {
         atomic,
         long_mode,
-        opcode: vec![0x05],
+        opcode: &[0x05],
         op1: None,
         op2: None,
         imm: Some(Imm(imm as u64, ImmByte::Bit32)),
@@ -222,7 +222,7 @@ pub fn add_imm32(atomic: bool, long_mode: bool, op1: Op1, imm: u32) -> Vec<u8> {
     Inst {
         atomic,
         long_mode,
-        opcode: vec![0x81],
+        opcode: &[0x81],
         op1: Some(op1),
         op2: None,
         imm: Some(Imm(imm as u64, ImmByte::Bit32)),
@@ -235,7 +235,7 @@ pub fn add_imm8(atomic: bool, long_mode: bool, op1: Op1, imm: u8) -> Vec<u8> {
     Inst {
         atomic,
         long_mode,
-        opcode: vec![0x83],
+        opcode: &[0x83],
         op1: Some(op1),
         op2: None,
         imm: Some(Imm(imm as u64, ImmByte::Bit8)),
@@ -248,7 +248,7 @@ pub fn add(atomic: bool, long_mode: bool, op1: Op1, op2: TargetReg) -> Vec<u8> {
     Inst {
         atomic,
         long_mode,
-        opcode: vec![0x01],
+        opcode: &[0x01],
         op1: Some(op1),
         op2: Some(op2),
         imm: None,
@@ -262,7 +262,7 @@ pub fn add_rev(atomic: bool, long_mode: bool, op1: Op1, op2: TargetReg) -> Vec<u
     Inst {
         atomic,
         long_mode,
-        opcode: vec![0x03],
+        opcode: &[0x03],
         op1: Some(op1),
         op2: Some(op2),
         imm: None,
@@ -275,7 +275,7 @@ pub fn lea(atomic: bool, long_mode: bool, op1: TargetReg, op2: TargetReg) -> Vec
     Inst {
         atomic,
         long_mode,
-        opcode: vec![0x8d],
+        opcode: &[0x8d],
         op1: Some(Op1::Direct(op1)),
         op2: Some(op2),
         imm: None,
@@ -288,7 +288,7 @@ pub fn inc(atomic: bool, long_mode: bool, op1: Op1) -> Vec<u8> {
     Inst {
         atomic,
         long_mode,
-        opcode: vec![0xfe],
+        opcode: &[0xfe],
         op1: Some(op1),
         op2: None,
         imm: None,
@@ -301,7 +301,7 @@ pub fn inc_reg32(atomic: bool, op1: Register32) -> Vec<u8> {
     Inst {
         atomic,
         long_mode: false,
-        opcode: vec![0x40],
+        opcode: &[0x40],
         op1: None,
         op2: None,
         imm: Some(Imm::from(op1)),
@@ -316,7 +316,7 @@ pub fn sub_first_reg(atomic: bool, imm: u32) -> Vec<u8> {
     Inst {
         atomic,
         long_mode: false,
-        opcode: vec![0x2d],
+        opcode: &[0x2d],
         op1: None,
         op2: None,
         imm: Some(Imm::from(imm)),
@@ -329,7 +329,7 @@ pub fn sub_imm(atomic: bool, long_mode: bool, op1: Op1, imm: u32) -> Vec<u8> {
     Inst {
         atomic,
         long_mode,
-        opcode: vec![0x81, 5],
+        opcode: &[0x81, 5],
         op1: Some(op1),
         op2: None,
         imm: Some(Imm::from(imm)),
@@ -342,7 +342,7 @@ pub fn sub_signed_imm8(atomic: bool, long_mode: bool, op1: Op1, imm: u8) -> Vec<
     Inst {
         atomic,
         long_mode,
-        opcode: vec![0x83, 5],
+        opcode: &[0x83, 5],
         op1: Some(op1),
         op2: None,
         imm: Some(Imm::from(imm)),
@@ -356,7 +356,7 @@ pub fn sub(atomic: bool, long_mode: bool, op1: Op1, op2: TargetReg) -> Vec<u8> {
     Inst {
         atomic,
         long_mode,
-        opcode: vec![0x29],
+        opcode: &[0x29],
         op1: Some(op1),
         op2: Some(op2),
         imm: None,
@@ -370,7 +370,7 @@ pub fn sub_rev(atomic: bool, long_mode: bool, op1: Op1, op2: TargetReg) -> Vec<u
     Inst {
         atomic,
         long_mode,
-        opcode: vec![0x2b],
+        opcode: &[0x2b],
         op1: Some(op1),
         op2: Some(op2),
         imm: None,
@@ -385,7 +385,7 @@ pub fn dec(atomic: bool, long_mode: bool, op1: Op1) -> Vec<u8> {
     Inst {
         atomic,
         long_mode,
-        opcode: vec![0xff, 1],
+        opcode: &[0xff, 1],
         op1: Some(op1),
         op2: None,
         imm: None,
@@ -398,7 +398,7 @@ pub fn dec_reg32(atomic: bool, reg: Register32) -> Vec<u8> {
     Inst {
         atomic,
         long_mode: false,
-        opcode: vec![0x48],
+        opcode: &[0x48],
         op1: None,
         op2: None,
         imm: Some(Imm::from(reg)),
@@ -413,7 +413,7 @@ pub fn neg(atomic: bool, long_mode: bool, op1: Op1) -> Vec<u8> {
     Inst {
         atomic,
         long_mode,
-        opcode: vec![0xf6],
+        opcode: &[0xf6],
         op1: Some(op1),
         op2: None,
         imm: None,
@@ -428,7 +428,7 @@ pub fn mul_byte_first_reg(atomic: bool, long_mode: bool, op1: Op1) -> Vec<u8> {
     Inst {
         atomic,
         long_mode,
-        opcode: vec![0xf6, 4],
+        opcode: &[0xf6, 4],
         op1: Some(op1),
         op2: None,
         imm: None,
@@ -441,7 +441,7 @@ pub fn mul_first_reg(atomic: bool, long_mode: bool, op1: Op1) -> Vec<u8> {
     Inst {
         atomic,
         long_mode,
-        opcode: vec![0xf7, 4],
+        opcode: &[0xf7, 4],
         op1: Some(op1),
         op2: None,
         imm: None,
@@ -454,7 +454,7 @@ pub fn imul_byte_first_reg(atomic: bool, long_mode: bool, op1: Op1) -> Vec<u8> {
     Inst {
         atomic,
         long_mode,
-        opcode: vec![0xf6, 5],
+        opcode: &[0xf6, 5],
         op1: Some(op1),
         op2: None,
         imm: None,
@@ -467,7 +467,7 @@ pub fn imul_first_reg(atomic: bool, long_mode: bool, op1: Op1) -> Vec<u8> {
     Inst {
         atomic,
         long_mode,
-        opcode: vec![0xf7, 5],
+        opcode: &[0xf7, 5],
         op1: Some(op1),
         op2: None,
         imm: None,
@@ -480,7 +480,7 @@ pub fn imul_reg(atomic: bool, long_mode: bool, op1: Op1, op2: TargetReg) -> Vec<
     Inst {
         atomic,
         long_mode,
-        opcode: vec![0x0f, 0xaf],
+        opcode: &[0x0f, 0xaf],
         op1: Some(op1),
         op2: Some(op2),
         imm: None,
@@ -499,7 +499,7 @@ pub fn imul_reg_and_imm8(
     Inst {
         atomic,
         long_mode,
-        opcode: vec![0x6b],
+        opcode: &[0x6b],
         op1: Some(op1),
         op2: Some(op2),
         imm: Some(Imm::from(imm)),
@@ -518,7 +518,7 @@ pub fn imul_reg_and_imm32(
     Inst {
         atomic,
         long_mode,
-        opcode: vec![0x69],
+        opcode: &[0x69],
         op1: Some(op1),
         op2: Some(op2),
         imm: Some(Imm::from(imm)),
@@ -533,7 +533,7 @@ pub fn div_byte_first_reg(atomic: bool, long_mode: bool, op1: Op1) -> Vec<u8> {
     Inst {
         atomic,
         long_mode,
-        opcode: vec![0xf6, 6],
+        opcode: &[0xf6, 6],
         op1: Some(op1),
         op2: None,
         imm: None,
@@ -546,7 +546,7 @@ pub fn div_first_reg(atomic: bool, long_mode: bool, op1: Op1) -> Vec<u8> {
     Inst {
         atomic,
         long_mode,
-        opcode: vec![0xf7, 6],
+        opcode: &[0xf7, 6],
         op1: Some(op1),
         op2: None,
         imm: None,
@@ -559,7 +559,7 @@ pub fn idiv_byte_first_reg(atomic: bool, long_mode: bool, op1: Op1) -> Vec<u8> {
     Inst {
         atomic,
         long_mode,
-        opcode: vec![0xf6, 6],
+        opcode: &[0xf6, 6],
         op1: Some(op1),
         op2: None,
         imm: None,
@@ -572,7 +572,7 @@ pub fn idiv_first_reg(atomic: bool, long_mode: bool, op1: Op1) -> Vec<u8> {
     Inst {
         atomic,
         long_mode,
-        opcode: vec![0xf7, 6],
+        opcode: &[0xf7, 6],
         op1: Some(op1),
         op2: None,
         imm: None,
@@ -589,7 +589,7 @@ pub fn sign_extend(long_mode: bool) -> Vec<u8> {
     Inst {
         atomic: false,
         long_mode,
-        opcode: vec![0x98],
+        opcode: &[0x98],
         op1: None,
         op2: None,
         imm: None,
@@ -604,7 +604,7 @@ pub fn sign_extend2(long_mode: bool) -> Vec<u8> {
     Inst {
         atomic: false,
         long_mode,
-        opcode: vec![0x98],
+        opcode: &[0x98],
         op1: None,
         op2: None,
         imm: None,
@@ -619,7 +619,7 @@ pub fn cmp_first_reg_and_imm(long_mode: bool, imm: u32) -> Vec<u8> {
     Inst {
         atomic: false,
         long_mode,
-        opcode: vec![0x3d],
+        opcode: &[0x3d],
         op1: None,
         op2: None,
         imm: Some(Imm::from(imm)),
@@ -633,7 +633,7 @@ pub fn cmp_imm(long_mode: bool, op1: Op1, imm: u32) -> Vec<u8> {
     Inst {
         atomic: false,
         long_mode,
-        opcode: vec![0x81, 7],
+        opcode: &[0x81, 7],
         op1: Some(op1),
         op2: None,
         imm: Some(Imm(imm as u64, ImmByte::Bit32)),
@@ -647,7 +647,7 @@ pub fn cmp_imm8(long_mode: bool, op1: Op1, imm: u8) -> Vec<u8> {
     Inst {
         atomic: false,
         long_mode,
-        opcode: vec![0x83, 7],
+        opcode: &[0x83, 7],
         op1: Some(op1),
         op2: None,
         imm: Some(Imm(imm as u64, ImmByte::Bit8)),
@@ -661,7 +661,7 @@ pub fn cmp(long_mode: bool, op1: Op1, op2: TargetReg) -> Vec<u8> {
     Inst {
         atomic: false,
         long_mode,
-        opcode: vec![0x39, 7],
+        opcode: &[0x39, 7],
         op1: Some(op1),
         op2: Some(op2),
         imm: None,
@@ -675,7 +675,7 @@ pub fn cmp_rev(long_mode: bool, op1: Op1, op2: TargetReg) -> Vec<u8> {
     Inst {
         atomic: false,
         long_mode,
-        opcode: vec![0x3b, 7],
+        opcode: &[0x3b, 7],
         op1: Some(op1),
         op2: Some(op2),
         imm: None,
@@ -689,7 +689,7 @@ pub fn cmps(long_mode: bool) -> Vec<u8> {
     Inst {
         atomic: false,
         long_mode,
-        opcode: vec![0xa7],
+        opcode: &[0xa7],
         op1: None,
         op2: None,
         imm: None,
@@ -704,7 +704,7 @@ pub fn test_first_reg_and_imm8(imm: u8) -> Vec<u8> {
     Inst {
         atomic: false,
         long_mode: false,
-        opcode: vec![0xa8],
+        opcode: &[0xa8],
         op1: None,
         op2: None,
         imm: Some(Imm(imm as u64, ImmByte::Bit8)),
@@ -717,7 +717,7 @@ pub fn test_first_reg(long_mode: bool, imm: Imm) -> Vec<u8> {
     Inst {
         atomic: false,
         long_mode,
-        opcode: vec![0xa9],
+        opcode: &[0xa9],
         op1: None,
         op2: None,
         imm: Some(imm),
@@ -730,7 +730,7 @@ pub fn test_imm8(long_mode: bool, op1: Op1, imm: u8) -> Vec<u8> {
     Inst {
         atomic: false,
         long_mode,
-        opcode: vec![0xf6, 0],
+        opcode: &[0xf6, 0],
         op1: Some(op1),
         op2: None,
         imm: Some(Imm(imm as u64, ImmByte::Bit8)),
@@ -744,7 +744,7 @@ pub fn test_imm(long_mode: bool, op1: Op1, op2: TargetReg, imm: u32) -> Vec<u8> 
     Inst {
         atomic: false,
         long_mode,
-        opcode: vec![0xf7, 0],
+        opcode: &[0xf7, 0],
         op1: Some(op1),
         op2: Some(op2),
         imm: Some(Imm(imm as u64, ImmByte::Bit32)),
@@ -758,7 +758,7 @@ pub fn test_u8(long_mode: bool, op1: Op1, op2: TargetReg) -> Vec<u8> {
     Inst {
         atomic: false,
         long_mode,
-        opcode: vec![0x84],
+        opcode: &[0x84],
         op1: Some(op1),
         op2: Some(op2),
         imm: None,
@@ -772,7 +772,7 @@ pub fn test(long_mode: bool, op1: Op1, op2: TargetReg) -> Vec<u8> {
     Inst {
         atomic: false,
         long_mode,
-        opcode: vec![0x85],
+        opcode: &[0x85],
         op1: Some(op1),
         op2: Some(op2),
         imm: None,
@@ -787,7 +787,7 @@ pub fn int1() -> Vec<u8> {
     Inst {
         atomic: false,
         long_mode: false,
-        opcode: vec![0xf1],
+        opcode: &[0xf1],
         op1: None,
         op2: None,
         imm: None,
@@ -802,7 +802,7 @@ pub fn int3() -> Vec<u8> {
     Inst {
         atomic: false,
         long_mode: false,
-        opcode: vec![0xcc],
+        opcode: &[0xcc],
         op1: None,
         op2: None,
         imm: None,
@@ -817,7 +817,7 @@ pub fn int(imm: u8) -> Vec<u8> {
     Inst {
         atomic: false,
         long_mode: false,
-        opcode: vec![0xcd],
+        opcode: &[0xcd],
         op1: None,
         op2: None,
         imm: Some(Imm::from(imm)),
@@ -832,7 +832,7 @@ pub fn into() -> Vec<u8> {
     Inst {
         atomic: false,
         long_mode: false,
-        opcode: vec![0xce],
+        opcode: &[0xce],
         op1: None,
         op2: None,
         imm: None,
@@ -847,7 +847,7 @@ pub fn syscall() -> Vec<u8> {
     Inst {
         atomic: false,
         long_mode: false,
-        opcode: vec![0x0f, 0x05],
+        opcode: &[0x0f, 0x05],
         op1: None,
         op2: None,
         imm: None,
@@ -862,7 +862,7 @@ pub fn sysenter() -> Vec<u8> {
     Inst {
         atomic: false,
         long_mode: false,
-        opcode: vec![0x0f, 0x34],
+        opcode: &[0x0f, 0x34],
         op1: None,
         op2: None,
         imm: None,
@@ -877,7 +877,7 @@ pub fn call_relative_addr(label: String) -> JumpInst {
     let opcodes = Inst {
         atomic: false,
         long_mode: false,
-        opcode: vec![0xe9],
+        opcode: &[0xe9],
         op1: None,
         op2: None,
         imm: Some(Imm(0, ImmByte::Bit32)),
@@ -892,7 +892,7 @@ pub fn call_addr_literal(addr: Imm) -> Vec<u8> {
     Inst {
         atomic: false,
         long_mode: false,
-        opcode: vec![0x9a],
+        opcode: &[0x9a],
         op1: None,
         op2: None,
         imm: Some(addr),
@@ -905,7 +905,7 @@ pub fn call_reg(op1: Op1) -> Vec<u8> {
     Inst {
         atomic: false,
         long_mode: false,
-        opcode: vec![0x9a],
+        opcode: &[0x9a],
         op1: Some(op1),
         op2: None,
         imm: None,
@@ -920,7 +920,7 @@ pub fn jmp(label: String) -> JumpInst {
     let opcodes = Inst {
         atomic: false,
         long_mode: false,
-        opcode: vec![0xe9],
+        opcode: &[0xe9],
         op1: None,
         op2: None,
         imm: Some(Imm(0, ImmByte::Bit32)),
@@ -935,7 +935,7 @@ pub fn jmp_addr_literal(addr: Imm) -> Vec<u8> {
     Inst {
         atomic: false,
         long_mode: false,
-        opcode: vec![0xea],
+        opcode: &[0xea],
         op1: None,
         op2: None,
         imm: Some(addr),
@@ -949,7 +949,7 @@ pub fn jmp_to_runtime_symbol(label: String) -> JumpInst {
     let opcodes = Inst {
         atomic: false,
         long_mode: false,
-        opcode: vec![0xea],
+        opcode: &[0xea],
         op1: None,
         op2: None,
         imm: Some(Imm(0, ImmByte::Bit32)),
@@ -963,7 +963,7 @@ pub fn jmp_to_reg(reg: TargetReg) -> Vec<u8> {
     Inst {
         atomic: false,
         long_mode: false,
-        opcode: vec![0xff, 4],
+        opcode: &[0xff, 4],
         op1: Some(Op1::Direct(reg)),
         op2: None,
         imm: None,
@@ -992,36 +992,36 @@ macro_rules! impl_cond_jump_inst {
     };
 }
 
-impl_cond_jump_inst!(ja, vec![0x0f, 0x87]);
-impl_cond_jump_inst!(jb, vec![0x0f, 0x82]);
-impl_cond_jump_inst!(jc, vec![0x0f, 0x82]);
-impl_cond_jump_inst!(je, vec![0x0f, 0x84]);
-impl_cond_jump_inst!(jg, vec![0x0f, 0x8f]);
-impl_cond_jump_inst!(jl, vec![0x0f, 0x8c]);
-impl_cond_jump_inst!(jo, vec![0x0f, 0x80]);
-impl_cond_jump_inst!(jp, vec![0x0f, 0x8a]);
-impl_cond_jump_inst!(js, vec![0x0f, 0x88]);
-impl_cond_jump_inst!(jz, vec![0x0f, 0x84]);
-impl_cond_jump_inst!(jae, vec![0x0f, 0x83]);
-impl_cond_jump_inst!(jbe, vec![0x0f, 0x86]);
-impl_cond_jump_inst!(jge, vec![0x0f, 0x8d]);
-impl_cond_jump_inst!(jle, vec![0x0f, 0x8e]);
-impl_cond_jump_inst!(jpe, vec![0x0f, 0x8a]);
-impl_cond_jump_inst!(jpo, vec![0x0f, 0x8b]);
-impl_cond_jump_inst!(jna, vec![0x0f, 0x86]);
-impl_cond_jump_inst!(jnb, vec![0x0f, 0x83]);
-impl_cond_jump_inst!(jnc, vec![0x0f, 0x83]);
-impl_cond_jump_inst!(jne, vec![0x0f, 0x85]);
-impl_cond_jump_inst!(jng, vec![0x0f, 0x8e]);
-impl_cond_jump_inst!(jnl, vec![0x0f, 0x8d]);
-impl_cond_jump_inst!(jno, vec![0x0f, 0x81]);
-impl_cond_jump_inst!(jnp, vec![0x0f, 0x8b]);
-impl_cond_jump_inst!(jns, vec![0x0f, 0x89]);
-impl_cond_jump_inst!(jnz, vec![0x0f, 0x85]);
-impl_cond_jump_inst!(jnae, vec![0x0f, 0x82]);
-impl_cond_jump_inst!(jnbe, vec![0x0f, 0x87]);
-impl_cond_jump_inst!(jnge, vec![0x0f, 0x8c]);
-impl_cond_jump_inst!(jnle, vec![0x0f, 0x8f]);
+impl_cond_jump_inst!(ja, &[0x0f, 0x87]);
+impl_cond_jump_inst!(jb, &[0x0f, 0x82]);
+impl_cond_jump_inst!(jc, &[0x0f, 0x82]);
+impl_cond_jump_inst!(je, &[0x0f, 0x84]);
+impl_cond_jump_inst!(jg, &[0x0f, 0x8f]);
+impl_cond_jump_inst!(jl, &[0x0f, 0x8c]);
+impl_cond_jump_inst!(jo, &[0x0f, 0x80]);
+impl_cond_jump_inst!(jp, &[0x0f, 0x8a]);
+impl_cond_jump_inst!(js, &[0x0f, 0x88]);
+impl_cond_jump_inst!(jz, &[0x0f, 0x84]);
+impl_cond_jump_inst!(jae, &[0x0f, 0x83]);
+impl_cond_jump_inst!(jbe, &[0x0f, 0x86]);
+impl_cond_jump_inst!(jge, &[0x0f, 0x8d]);
+impl_cond_jump_inst!(jle, &[0x0f, 0x8e]);
+impl_cond_jump_inst!(jpe, &[0x0f, 0x8a]);
+impl_cond_jump_inst!(jpo, &[0x0f, 0x8b]);
+impl_cond_jump_inst!(jna, &[0x0f, 0x86]);
+impl_cond_jump_inst!(jnb, &[0x0f, 0x83]);
+impl_cond_jump_inst!(jnc, &[0x0f, 0x83]);
+impl_cond_jump_inst!(jne, &[0x0f, 0x85]);
+impl_cond_jump_inst!(jng, &[0x0f, 0x8e]);
+impl_cond_jump_inst!(jnl, &[0x0f, 0x8d]);
+impl_cond_jump_inst!(jno, &[0x0f, 0x81]);
+impl_cond_jump_inst!(jnp, &[0x0f, 0x8b]);
+impl_cond_jump_inst!(jns, &[0x0f, 0x89]);
+impl_cond_jump_inst!(jnz, &[0x0f, 0x85]);
+impl_cond_jump_inst!(jnae, &[0x0f, 0x82]);
+impl_cond_jump_inst!(jnbe, &[0x0f, 0x87]);
+impl_cond_jump_inst!(jnge, &[0x0f, 0x8c]);
+impl_cond_jump_inst!(jnle, &[0x0f, 0x8f]);
 
 /// ## logic inst
 
@@ -1031,7 +1031,7 @@ pub fn and_first_reg_imm32(long_mode: bool, imm: u32) -> Vec<u8> {
     Inst {
         atomic: false,
         long_mode,
-        opcode: vec![0x25],
+        opcode: &[0x25],
         op1: None,
         op2: None,
         imm: Some(Imm::from(imm)),
@@ -1044,7 +1044,7 @@ pub fn and_reg_imm32(long_mode: bool, op1: Op1, imm: u32) -> Vec<u8> {
     Inst {
         atomic: false,
         long_mode,
-        opcode: vec![0x81, 4],
+        opcode: &[0x81, 4],
         op1: Some(op1),
         op2: None,
         imm: Some(Imm::from(imm)),
@@ -1057,7 +1057,7 @@ pub fn and_reg_imm8(long_mode: bool, op1: Op1, imm: u8) -> Vec<u8> {
     Inst {
         atomic: false,
         long_mode,
-        opcode: vec![0x83, 4],
+        opcode: &[0x83, 4],
         op1: Some(op1),
         op2: None,
         imm: Some(Imm::from(imm)),
@@ -1070,7 +1070,7 @@ pub fn and(long_mode: bool, op1: Op1, reg: TargetReg) -> Vec<u8> {
     Inst {
         atomic: false,
         long_mode,
-        opcode: vec![0x21],
+        opcode: &[0x21],
         op1: Some(op1),
         op2: Some(reg),
         imm: None,
@@ -1083,7 +1083,7 @@ pub fn and_rev(long_mode: bool, op1: Op1, reg: TargetReg) -> Vec<u8> {
     Inst {
         atomic: false,
         long_mode,
-        opcode: vec![0x23],
+        opcode: &[0x23],
         op1: Some(op1),
         op2: Some(reg),
         imm: None,
@@ -1098,7 +1098,7 @@ pub fn or_first_reg_imm32(long_mode: bool, imm: u32) -> Vec<u8> {
     Inst {
         atomic: false,
         long_mode,
-        opcode: vec![0x0d],
+        opcode: &[0x0d],
         op1: None,
         op2: None,
         imm: Some(Imm::from(imm)),
@@ -1111,7 +1111,7 @@ pub fn or_reg_imm32(long_mode: bool, op1: Op1, imm: u32) -> Vec<u8> {
     Inst {
         atomic: false,
         long_mode,
-        opcode: vec![0x81, 1],
+        opcode: &[0x81, 1],
         op1: Some(op1),
         op2: None,
         imm: Some(Imm::from(imm)),
@@ -1124,7 +1124,7 @@ pub fn or_reg_imm8(long_mode: bool, op1: Op1, imm: u8) -> Vec<u8> {
     Inst {
         atomic: false,
         long_mode,
-        opcode: vec![0x83, 1],
+        opcode: &[0x83, 1],
         op1: Some(op1),
         op2: None,
         imm: Some(Imm::from(imm)),
@@ -1137,7 +1137,7 @@ pub fn or(long_mode: bool, op1: Op1, reg: TargetReg) -> Vec<u8> {
     Inst {
         atomic: false,
         long_mode,
-        opcode: vec![0x09],
+        opcode: &[0x09],
         op1: Some(op1),
         op2: Some(reg),
         imm: None,
@@ -1150,7 +1150,7 @@ pub fn or_rev(long_mode: bool, op1: Op1, reg: TargetReg) -> Vec<u8> {
     Inst {
         atomic: false,
         long_mode,
-        opcode: vec![0x0b],
+        opcode: &[0x0b],
         op1: Some(op1),
         op2: Some(reg),
         imm: None,
@@ -1170,7 +1170,7 @@ pub fn nop1() -> Vec<u8> {
     let r = Inst {
         atomic: false,
         long_mode: false,
-        opcode: vec![0x90],
+        opcode: &[0x90],
         op1: None,
         op2: None,
         imm: None,
@@ -1185,7 +1185,7 @@ pub fn nop2() -> Vec<u8> {
     let r = Inst {
         atomic: false,
         long_mode: false,
-        opcode: vec![66, 0x90],
+        opcode: &[66, 0x90],
         op1: None,
         op2: None,
         imm: None,
@@ -1223,7 +1223,7 @@ pub fn nop6() -> Vec<u8> {
     let r = Inst {
         atomic: false,
         long_mode: false,
-        opcode: vec![66, 0x0f, 0x1f],
+        opcode: &[66, 0x0f, 0x1f],
         op1: Some(Op1::ScaleBase(
             TargetReg::from(0),
             TargetReg::from(0),
@@ -1260,7 +1260,7 @@ pub fn nop9() -> Vec<u8> {
     let r = Inst {
         atomic: false,
         long_mode: false,
-        opcode: vec![66, 0x0f, 0x1f],
+        opcode: &[66, 0x0f, 0x1f],
         op1: Some(Op1::ScaleBase(
             TargetReg::from(0),
             TargetReg::from(0),
@@ -1280,7 +1280,7 @@ pub fn nop_multi_reg(op1: Op1) -> Vec<u8> {
     Inst {
         atomic: false,
         long_mode: false,
-        opcode: vec![0x0f, 0x1f],
+        opcode: &[0x0f, 0x1f],
         op1: Some(op1),
         op2: None,
         imm: None,
@@ -1303,7 +1303,7 @@ pub fn near_ret_imm16(imm: u16) -> Vec<u8> {
     Inst {
         atomic: false,
         long_mode: false,
-        opcode: vec![0xc2],
+        opcode: &[0xc2],
         op1: None,
         op2: None,
         imm: Some(Imm(imm as u64, ImmByte::Bit16)),
@@ -1316,7 +1316,7 @@ pub fn far_ret_imm16(imm: u16) -> Vec<u8> {
     Inst {
         atomic: false,
         long_mode: false,
-        opcode: vec![0xca],
+        opcode: &[0xca],
         op1: None,
         op2: None,
         imm: Some(Imm(imm as u64, ImmByte::Bit16)),
@@ -1333,7 +1333,7 @@ pub fn far_ret_imm16(imm: u16) -> Vec<u8> {
 /// Load scalar single-precision floating-point value from m32 to xmm1 register.
 pub fn movss(op1: Op1, op2: RegisterXmm) -> Vec<u8> {
     SSEInst {
-        opcode: vec![0xf3, 0x0f, 0x10],
+        opcode: &[0xf3, 0x0f, 0x10],
         op1: Some(op1),
         op2: Some(TargetReg::from(op2 as u8)),
         imm: None,
@@ -1346,7 +1346,7 @@ pub fn movss(op1: Op1, op2: RegisterXmm) -> Vec<u8> {
 /// movss xmm2/m32, xmm1
 pub fn movss_rev(op1: Op1, op2: RegisterXmm) -> Vec<u8> {
     SSEInst {
-        opcode: vec![0xf3, 0x0f, 0x11],
+        opcode: &[0xf3, 0x0f, 0x11],
         op1: Some(op1),
         op2: Some(TargetReg::from(op2 as u8)),
         imm: None,
@@ -1361,7 +1361,7 @@ pub fn movss_rev(op1: Op1, op2: RegisterXmm) -> Vec<u8> {
 /// Load scalar double-precision floating-point value from m64 to xmm1 register.
 pub fn movsd(op1: Op1, op2: RegisterXmm) -> Vec<u8> {
     SSEInst {
-        opcode: vec![0xf2, 0x0f, 0x10],
+        opcode: &[0xf2, 0x0f, 0x10],
         op1: Some(op1),
         op2: Some(TargetReg::from(op2 as u8)),
         imm: None,
@@ -1374,7 +1374,7 @@ pub fn movsd(op1: Op1, op2: RegisterXmm) -> Vec<u8> {
 /// movsd xmm2/m32, xmm1
 pub fn movsd_rev(op1: Op1, op2: RegisterXmm) -> Vec<u8> {
     SSEInst {
-        opcode: vec![0xf2, 0x0f, 0x11],
+        opcode: &[0xf2, 0x0f, 0x11],
         op1: Some(op1),
         op2: Some(TargetReg::from(op2 as u8)),
         imm: None,
@@ -1388,7 +1388,7 @@ pub fn movsd_rev(op1: Op1, op2: RegisterXmm) -> Vec<u8> {
 /// Add scalar single-precision floating-point value from xmm2 to xmm1 register.
 pub fn addss(op1: Op1, op2: RegisterXmm) -> Vec<u8> {
     SSEInst {
-        opcode: vec![0xf3, 0x0f, 0x58],
+        opcode: &[0xf3, 0x0f, 0x58],
         op1: Some(op1),
         op2: Some(TargetReg::from(op2 as u8)),
         imm: None,
@@ -1402,7 +1402,7 @@ pub fn addss(op1: Op1, op2: RegisterXmm) -> Vec<u8> {
 /// Add scalar double-precision floating-point value from xmm2 to xmm1 register.
 pub fn addsd(op1: Op1, op2: RegisterXmm) -> Vec<u8> {
     SSEInst {
-        opcode: vec![0xf2, 0x0f, 0x58],
+        opcode: &[0xf2, 0x0f, 0x58],
         op1: Some(op1),
         op2: Some(TargetReg::from(op2 as u8)),
         imm: None,
@@ -1416,7 +1416,7 @@ pub fn addsd(op1: Op1, op2: RegisterXmm) -> Vec<u8> {
 /// Subtract scalar single-precision floating-point value from xmm2 from xmm1 register.
 pub fn subss(op1: Op1, op2: RegisterXmm) -> Vec<u8> {
     SSEInst {
-        opcode: vec![0xf3, 0x0f, 0x5c],
+        opcode: &[0xf3, 0x0f, 0x5c],
         op1: Some(op1),
         op2: Some(TargetReg::from(op2 as u8)),
         imm: None,
@@ -1430,7 +1430,7 @@ pub fn subss(op1: Op1, op2: RegisterXmm) -> Vec<u8> {
 /// Subtract scalar double-precision floating-point value from xmm2 from xmm1 register.
 pub fn subsd(op1: Op1, op2: RegisterXmm) -> Vec<u8> {
     SSEInst {
-        opcode: vec![0xf2, 0x0f, 0x5c],
+        opcode: &[0xf2, 0x0f, 0x5c],
         op1: Some(op1),
         op2: Some(TargetReg::from(op2 as u8)),
         imm: None,
@@ -1444,7 +1444,7 @@ pub fn subsd(op1: Op1, op2: RegisterXmm) -> Vec<u8> {
 /// Multiply scalar single-precision floating-point value from xmm2 to xmm1 register.
 pub fn mulss(op1: Op1, op2: RegisterXmm) -> Vec<u8> {
     SSEInst {
-        opcode: vec![0xf3, 0x0f, 0x59],
+        opcode: &[0xf3, 0x0f, 0x59],
         op1: Some(op1),
         op2: Some(TargetReg::from(op2 as u8)),
         imm: None,
@@ -1458,7 +1458,7 @@ pub fn mulss(op1: Op1, op2: RegisterXmm) -> Vec<u8> {
 /// Multiply scalar double-precision floating-point value from xmm2 to xmm1 register.
 pub fn mulsd(op1: Op1, op2: RegisterXmm) -> Vec<u8> {
     SSEInst {
-        opcode: vec![0xf2, 0x0f, 0x59],
+        opcode: &[0xf2, 0x0f, 0x59],
         op1: Some(op1),
         op2: Some(TargetReg::from(op2 as u8)),
         imm: None,
@@ -1472,7 +1472,7 @@ pub fn mulsd(op1: Op1, op2: RegisterXmm) -> Vec<u8> {
 /// Divide scalar single-precision floating-point value from xmm2 by xmm1 register.
 pub fn divss(op1: Op1, op2: RegisterXmm) -> Vec<u8> {
     SSEInst {
-        opcode: vec![0xf3, 0x0f, 0x5e],
+        opcode: &[0xf3, 0x0f, 0x5e],
         op1: Some(op1),
         op2: Some(TargetReg::from(op2 as u8)),
         imm: None,
@@ -1486,7 +1486,7 @@ pub fn divss(op1: Op1, op2: RegisterXmm) -> Vec<u8> {
 /// Divide scalar double-precision floating-point value from xmm2 by xmm1 register.
 pub fn divsd(op1: Op1, op2: RegisterXmm) -> Vec<u8> {
     SSEInst {
-        opcode: vec![0xf2, 0x0f, 0x5e],
+        opcode: &[0xf2, 0x0f, 0x5e],
         op1: Some(op1),
         op2: Some(TargetReg::from(op2 as u8)),
         imm: None,
@@ -1513,7 +1513,7 @@ pub enum FcmpOp {
 /// Compare scalar single-precision floating-point value from xmm2 to xmm1 register.
 pub fn cmpss(op1: Op1, op2: RegisterXmm, imm: FcmpOp) -> Vec<u8> {
     SSEInst {
-        opcode: vec![0xf3, 0x0f, 0xC2],
+        opcode: &[0xf3, 0x0f, 0xC2],
         op1: Some(op1),
         op2: Some(TargetReg::from(op2 as u8)),
         imm: Some(Imm(imm as u64, ImmByte::Bit8)),
@@ -1527,7 +1527,7 @@ pub fn cmpss(op1: Op1, op2: RegisterXmm, imm: FcmpOp) -> Vec<u8> {
 /// Compare scalar double-precision floating-point value from xmm2 to xmm1 register.
 pub fn cmpsd(op1: Op1, op2: RegisterXmm, imm: FcmpOp) -> Vec<u8> {
     SSEInst {
-        opcode: vec![0xf2, 0x0f, 0xC2],
+        opcode: &[0xf2, 0x0f, 0xC2],
         op1: Some(op1),
         op2: Some(TargetReg::from(op2 as u8)),
         imm: Some(Imm(imm as u64, ImmByte::Bit8)),
@@ -1541,7 +1541,7 @@ pub fn cmpsd(op1: Op1, op2: RegisterXmm, imm: FcmpOp) -> Vec<u8> {
 /// Compute square root of scalar single-precision floating-point value in xmm2 and store result in xmm1.
 pub fn sqrtss(op1: Op1, op2: RegisterXmm) -> Vec<u8> {
     SSEInst {
-        opcode: vec![0xf3, 0x0f, 0x51],
+        opcode: &[0xf3, 0x0f, 0x51],
         op1: Some(op1),
         op2: Some(TargetReg::from(op2 as u8)),
         imm: None,

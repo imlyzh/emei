@@ -157,18 +157,18 @@ impl Imm {
 pub struct Inst {
     pub atomic: bool,
     pub long_mode: bool,
-    pub opcode: Vec<u8>, // 0~2bytes
+    pub opcode: &'static [u8], // 0~2bytes
     pub op1: Option<Op1>,
     pub op2: Option<TargetReg>,
     pub imm: Option<Imm>,
 }
 
 impl Inst {
-    pub fn new(atomic: bool, long_mode: bool, opcode: &[u8]) -> Self {
+    pub fn new(atomic: bool, long_mode: bool, opcode: &'static [u8]) -> Self {
         Inst {
             atomic,
             long_mode,
-            opcode: opcode.to_vec(),
+            opcode,
             op1: None,
             op2: None,
             imm: None,
@@ -193,7 +193,7 @@ impl Inst {
             r.extend(self.opcode);
             r
         } else {
-            self.opcode
+            self.opcode.to_vec()
         };
         let (mod_rm, sib, disp) = match (self.op1, self.op2) {
             (None, None) => (None, None, vec![]),
@@ -224,7 +224,7 @@ impl Inst {
 }
 
 pub struct SSEInst {
-    pub opcode: Vec<u8>,
+    pub opcode: &'static [u8],
     pub op1: Option<Op1>,
     pub op2: Option<TargetReg>,
     pub imm: Option<Imm>,
