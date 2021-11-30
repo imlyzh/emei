@@ -27,7 +27,6 @@ macro_rules! make_register_enum {
 make_register_enum!(Register8, AL, CL, DL, BL, AH, CH, DH, BH);
 make_register_enum!(Register16, AX, CX, DX, BX, SP, BP, SI, DI);
 make_register_enum!(Register32, Eax, Ecx, Edx, Ebx, Esp, Ebp, Esi, Edi);
-// make_register_enum!(RegisterMme, MM0, MM1, MM2, MM3, MM4, MM5, MM6, MM7);
 make_register_enum!(RegisterXmm, XMM0, XMM1, XMM2, XMM3, XMM4, XMM5, XMM6, XMM7);
 
 #[cfg(target_arch = "x86_64")]
@@ -51,6 +50,7 @@ pub enum Register64 {
     R14 = 14,
     R15 = 15,
 }
+
 #[cfg(target_arch = "x86_64")]
 impl From<u8> for Register64 {
     fn from(i: u8) -> Self {
