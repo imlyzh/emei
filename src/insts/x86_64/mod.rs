@@ -1,9 +1,10 @@
+pub mod inst_dump_buf;
 pub mod inst_list;
 pub mod registers;
 
 use std::panic;
 
-use registers::{modrm, AddrMode, Register32, RegisterXmm, ScaledIndex, TargetReg, APPEND_SIB};
+use registers::{modrm, AddrMode, Register32, ScaledIndex, TargetReg, APPEND_SIB};
 
 use self::registers::{sib, Register64};
 

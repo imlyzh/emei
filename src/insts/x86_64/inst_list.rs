@@ -1,6 +1,5 @@
 use crate::insts::{
-    inst_dump_buf::JumpInst,
-    x86_64::{Imm, SSEInst},
+    x86_64::{Imm, SSEInst, inst_dump_buf::JumpInst},
     ImmByte,
 };
 

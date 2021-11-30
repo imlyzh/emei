@@ -3,7 +3,7 @@ use std::ffi::c_void;
 #[cfg(windows)]
 use winapi::ctypes::c_void;
 
-use crate::insts::inst_dump_buf::InstBuffer;
+use crate::insts::x86_64::inst_dump_buf::InstBuffer;
 
 #[derive(Debug, Clone, Copy, Eq, PartialEq, Ord, PartialOrd)]
 pub struct PageSize(pub usize);
