@@ -197,7 +197,7 @@ impl Inst {
         };
         let (mod_rm, sib, disp) = match (self.op1, self.op2) {
             (None, None) => (None, None, vec![]),
-            (None, Some(_op2)) => panic!("unsupport None, reg instruction"), //(None, None, vec![], vec![op2 as u8]),
+            (None, Some(_op2)) => panic!("unsupported None, reg instruction"), //(None, None, vec![], vec![op2 as u8]),
             (Some(op1), None) => {
                 let (mod_rm, sib, disp) = op1.to_modrm_sib_disp(TargetReg::from(0));
                 (Some(mod_rm), sib, disp)
@@ -216,7 +216,7 @@ impl Inst {
             prefixes,
             opcode,
             modrm: mod_rm,
-            sib: sib,
+            sib,
             disp,
             imm,
         }
