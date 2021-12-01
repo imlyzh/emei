@@ -15,7 +15,13 @@ pub fn r(
     rs2: Reg,
     funct7: u8
 ) -> Inst {
-    todo!()
+    let mut r = (opcode & 0b111111) as u32;
+    r |= ((rd & 0b11111) as u32) << 6;
+    r |= ((funct3 & 0b111) as u32) << 11;
+    r |= ((rs1 & 0b11111) as u32) << 14;
+    r |= ((rs2 & 0b11111) as u32) << 19;
+    r |= ((funct7 & 0b1111111) as u32) << 24;
+    r
 }
 
 pub fn i(
@@ -25,7 +31,12 @@ pub fn i(
     rs1: Reg,
     imm: u16,
 ) -> Inst {
-    todo!()
+    let mut r = opcode as u32;
+    r |= ((rd & 0b11111) as u32) << 6;
+    r |= ((funct3 & 0b111) as u32) << 11;
+    r |= ((rs1 & 0b11111) as u32) << 14;
+    r |= ((imm & 0b11111111111) as u32) << 19;
+    r
 }
 
 pub fn s(
@@ -36,7 +47,13 @@ pub fn s(
     rs2: Reg,
     imm5_11: u8,
 ) -> Inst {
-    todo!()
+    let mut r = opcode as u32;
+    r |= ((imm0_4 & 0b11111) as u32) << 6;
+    r |= ((funct3 & 0b111) as u32) << 11;
+    r |= ((rs1 & 0b11111) as u32) << 14;
+    r |= ((rs2 & 0b11111) as u32) << 19;
+    r |= ((imm5_11 & 0b1111111) as u32) << 24;
+    r
 }
 
 pub fn u(
@@ -44,7 +61,10 @@ pub fn u(
     rd: Reg,
     imm: u32,
 ) -> Inst {
-    todo!()
+    let mut r = opcode as u32;
+    r |= ((rd & 0b11111) as u32) << 6;
+    r |= (imm << 20) >> 9;
+    r
 }
 
 pub fn b(
@@ -57,7 +77,9 @@ pub fn b(
     imm5_10: u8,
     imm12: u8,
 ) -> Inst {
-    todo!()
+    let imm0_4 = imm11 | (imm1_4 << 1);
+    let imm5_11 = imm5_10 | (imm12 << 6);
+    s(opcode, imm0_4, funct3, rs1, rs2, imm5_11)
 }
 
 pub fn j(
@@ -68,5 +90,10 @@ pub fn j(
     imm1_10: u8,
     imm20: u8,
 ) -> Inst {
-    todo!()
+    // Warning: data is not filter, Pass parameters in compliance with standards
+    let mut imm = imm12_19 as u32;
+    imm |= (imm11 as u32) << 8;
+    imm |= (imm1_10 as u32) << 9;
+    imm |= (imm20 as u32) << 19;
+    u(opcode, rd, imm)
 }
