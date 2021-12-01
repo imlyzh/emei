@@ -89,11 +89,7 @@ impl TargetReg {
 impl TargetReg {
     pub fn is_extend(&self) -> bool {
         let v = *self as u8;
-        if v >= 8 {
-            true
-        } else {
-            false
-        }
+        v >= 8
     }
 }
 

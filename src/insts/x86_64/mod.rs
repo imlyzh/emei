@@ -18,10 +18,10 @@ const PREFIX_LOCK: u8 = 0xF0;
 // X 1 Extension of the SIB index field
 // B 0 Extension of the ModR/M r/m field, SIB base field, or Opcode reg field
 
-const REX_W: u8 = 0b01001000; // 48
-const REX_R: u8 = 0b01000100; // 44
-const REX_X: u8 = 0b01000010; // 42
-const REX_B: u8 = 0b01000001; // 41
+pub const REX_W: u8 = 0b01001000; // 48
+pub const REX_R: u8 = 0b01000100; // 44
+pub const REX_X: u8 = 0b01000010; // 42
+pub const REX_B: u8 = 0b01000001; // 41
 
 ///////////////////////////////////////////////////////
 

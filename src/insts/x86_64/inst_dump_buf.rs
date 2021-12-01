@@ -38,6 +38,9 @@ impl JumpInst {
     pub fn len(&self) -> usize {
         self.opcodes.len()
     }
+    pub fn is_empty(&self) -> bool {
+        self.len() == 0
+    }
 }
 
 #[derive(Debug, Clone)]
@@ -58,6 +61,9 @@ impl InstUnit {
             // InstUnit::CallInst(call_inst) => call_inst.0.len(),
         }
     }
+    pub fn is_empty(&self) -> bool {
+        self.len() == 0
+    }
 }
 
 #[derive(Debug, Clone, Default)]
@@ -70,6 +76,9 @@ pub struct InstBuffer {
 impl InstBuffer {
     pub fn len(&self) -> usize {
         self.buf.borrow().len()
+    }
+    pub fn is_empty(&self) -> bool {
+        self.len() == 0
     }
 
     pub fn inst(&self, i: Vec<u8>) {
@@ -91,7 +100,7 @@ impl InstBuffer {
     pub fn label(&self, label: String) {
         self.label_buf
             .borrow_mut()
-            .insert(label, self.offset.borrow().clone());
+            .insert(label, *self.offset.borrow());
     }
 
     pub fn dump(&self, base_addr: u32, buf: &mut Vec<u8>) -> Result<(), LinkError> {
@@ -106,7 +115,7 @@ impl InstBuffer {
                         .borrow()
                         .get(&j.label)
                         .cloned()
-                        .ok_or(LinkError(j.label.clone()))?;
+                        .ok_or_else(|| LinkError(j.label.clone()))?;
                     let obj = base_addr + obj;
                     buf.extend(j.opcodes[..j.modify_range.0].iter());
                     buf.extend(obj.to_ne_bytes());
