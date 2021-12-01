@@ -4,6 +4,7 @@ pub mod rv32i;
 use registers::Reg;
 
 
+// pub type CInst = u16;
 pub type Inst = u32;
 
 pub fn r(
