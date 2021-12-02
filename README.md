@@ -1,12 +1,27 @@
 # emei
 
-The 峨眉 (EMei) JIT/AOT backend framework.
+The 峨眉 (EMei) JIT/AOT codegen backend framework.
 
 ## Support Instructions
 
+warning: **only supported little ending byte array output**.
+
+### risc-v
+
+- [x] rv32i
+  - [ ] m extension
+  - [ ] a extension
+  - [ ] f extension
+  - [ ] d extension
+  - [ ] c extension
+- [ ] rv64i
+- [ ] rv128i
+
+Please refer to the riscv arch manual.
+
 ### x86_64
 
-warning: ***unsupport fpu float operator***.
+warning: **unsupported x87 fpu float operator**.
 
 - mov
   - mov
@@ -36,6 +51,14 @@ warning: ***unsupport fpu float operator***.
   - dec
   - dec_reg32
 
+- mul
+
+- div
+
+- cmp
+
+- test
+
 - jump
   - jmp
     - jmp to relative addr
@@ -44,24 +67,18 @@ warning: ***unsupport fpu float operator***.
   - jump cond code
     - /ja/jb/jc/je/jg/jl/jo/jp/js/jz/jae/jbe/jge/jle/jpe/jpo/jna/jnb/jnc/jne/jng/jnl/jno/jnp/jns/jnz/jnae/jnbe/jnge/jnle
 
-- cmp
-
-- test
-
 - call
   - call to relative addr
   - call to addr literal (jit use it)
   - call to register
 
-- nop
-  - nop(nop1)
-  - nop1-9
-
 - ret
   - near_ret/near_ret_imm
   - far_ret/far_ret_imm
 
-...etc.
+- nop
+  - nop(nop1)
+  - nop1-9
 
 #### about headware inference
 
@@ -87,4 +104,4 @@ warning: ***unsupport fpu float operator***.
 
 ## Example
 
-**look src/main.rs**.
+**look src/lib.rs**.
