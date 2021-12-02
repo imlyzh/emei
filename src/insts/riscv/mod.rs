@@ -1,6 +1,7 @@
 pub mod inst_dump_buf;
 pub mod registers;
 pub mod rv32i;
+pub mod rv32m;
 
 use registers::Reg;
 

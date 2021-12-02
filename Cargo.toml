@@ -1,7 +1,7 @@
 [package]
 name = "emei"
 license = "GPL-3.0"
-version = "0.1.2"
+version = "0.2.0"
 authors = ["Lyzh <enterindex@gmail.com>"]
 edition = "2021"
 description = "The EMei JIT/AOT backend framework."
