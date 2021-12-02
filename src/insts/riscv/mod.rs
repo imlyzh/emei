@@ -2,6 +2,10 @@ pub mod inst_dump_buf;
 pub mod registers;
 pub mod rv32i;
 pub mod rv32m;
+pub mod rv32fd;
+pub mod rv32a;
+pub mod rv32c;
+pub mod rv32v;
 
 use registers::Reg;
 
@@ -24,6 +28,19 @@ pub fn r(
     r |= ((rs2 & 0b11111) as u32) << 19;
     r |= ((funct7 & 0b1111111) as u32) << 24;
     r
+}
+
+pub fn r4(
+    opcode: u8,
+    rd: Reg,
+    rm: u8,
+    rs1: Reg,
+    rs2: Reg,
+    rs3: Reg,
+    mut funct7: u8
+) -> Inst {
+    funct7 |= rs3 << 2;
+    r(opcode, rd, rm, rs1, rs2, funct7)
 }
 
 pub fn i(

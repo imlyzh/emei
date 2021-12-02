@@ -1,6 +1,6 @@
 # emei
 
-The 峨眉 (EMei) JIT/AOT codegen backend framework.
+The 峨眉 (EMei) JIT/AOT backend codegen framework.
 
 ## Support Instructions
 
@@ -9,10 +9,10 @@ warning: **only supported little ending byte array output**.
 ### risc-v
 
 - [x] rv32i
-  - [ ] m extension
+  - [x] m extension
   - [ ] a extension
-  - [ ] f extension
-  - [ ] d extension
+  - [x] f extension
+  - [x] d extension
   - [ ] c extension
 - [ ] rv64i
 - [ ] rv128i

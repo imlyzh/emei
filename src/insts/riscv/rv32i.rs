@@ -63,7 +63,7 @@ ld_impl!(lw, 0b010);
 ld_impl!(lbu, 0b100);
 ld_impl!(lhu, 0b101);
 
-pub fn mathi(funct: u8, rd: Reg, rs1: Reg, imm: u16) -> Inst {
+fn mathi(funct: u8, rd: Reg, rs1: Reg, imm: u16) -> Inst {
     i(0b0010011, rd, funct, rs1, imm)
 }
 
