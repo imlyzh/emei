@@ -22,3 +22,7 @@ impl ImmByte {
         }
     }
 }
+
+
+#[derive(Debug, Clone)]
+pub struct LinkError(pub String);

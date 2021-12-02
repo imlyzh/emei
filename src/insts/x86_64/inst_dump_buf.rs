@@ -4,7 +4,7 @@ use std::{
     ops::{AddAssign, DerefMut},
 };
 
-use crate::insts::ImmByte;
+use crate::insts::{ImmByte, LinkError};
 
 /*
 #[derive(Debug, Clone, Default)]
@@ -42,9 +42,6 @@ impl JumpInst {
         self.len() == 0
     }
 }
-
-#[derive(Debug, Clone)]
-pub struct LinkError(pub String);
 
 #[derive(Debug, Clone)]
 pub enum InstUnit {
