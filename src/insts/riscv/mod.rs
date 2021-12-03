@@ -1,11 +1,9 @@
 pub mod inst_dump_buf;
 pub mod registers;
-pub mod rv32i;
-pub mod rv32m;
-pub mod rv32fd;
-pub mod rv32a;
-pub mod rv32c;
-pub mod rv32v;
+pub mod rv32;
+pub mod rv64;
+pub mod rv128;
+
 
 use registers::Reg;
 
@@ -128,7 +126,7 @@ pub fn cr(opcode: u8, rs2: Reg, rd: Reg, funct4: u8) -> CInst {
 }
 
 pub fn ci(opcode: u8, nzimm0_4: u8, rd: Reg, nzimm_5: u8, code: u8) -> CInst {
-    let mut r = opcode;
+    let mut r = opcode as u16;
     r |= ((nzimm0_4 & 0b11111) as u16) << 2;
     r |= ((rd.0 & 0b11111) as u16) << 7;
     r |= ((nzimm_5 & 0b1) as u16) << 12;

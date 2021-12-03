@@ -1,5 +1,5 @@
-use super::registers::Reg;
-use super::*;
+use crate::insts::riscv::registers::Reg;
+use crate::insts::riscv::*;
 
 fn mmathi(funct: u8, rd: Reg, rs1: Reg, imm: u16) -> Inst {
     i(0b0110011, rd, funct, rs1, imm)

@@ -1,5 +1,5 @@
-use super::registers::{Reg, X0};
-use super::*;
+use crate::insts::riscv::registers::{Reg, X0};
+use crate::insts::riscv::*;
 
 pub fn c_addi(rd: Reg, nzimm: i8) -> CInst {
     let imm0_4 = nzimm as u8 & 0b11111;
@@ -12,7 +12,7 @@ pub fn c_nop() -> CInst {
 }
 
 pub fn c_jal(offset: i16) -> CInst {
-    let imm5 = offset as u16 >> 5;
-    let imm11 = (offset as u16) >> 11;
+    // let imm5 = offset as u16 >> 5;
+    // let imm11 = (offset as u16) >> 11;
     cj(0b01, todo!(), 0b001)
 }

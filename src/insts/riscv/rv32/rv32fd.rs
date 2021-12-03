@@ -1,5 +1,5 @@
-use super::registers::Reg;
-use super::*;
+use crate::insts::riscv::registers::Reg;
+use crate::insts::riscv::*;
 
 
 pub fn flw(rd: Reg, rs1: Reg, imm: u16) -> Inst {

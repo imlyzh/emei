@@ -4,7 +4,7 @@ use std::{
     ops::{AddAssign, DerefMut},
 };
 
-use crate::insts::{LinkError, riscv::rv32i::branch};
+use crate::insts::{LinkError, riscv::rv32::rv32i::branch};
 
 use super::{Inst, CInst, registers::Reg};
 

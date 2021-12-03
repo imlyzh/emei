@@ -1,5 +1,5 @@
-use super::registers::Reg;
-use super::*;
+use crate::insts::riscv::registers::Reg;
+use crate::insts::riscv::*;
 
 pub fn lui(rd: Reg, imm: u32) -> Inst {
     u(0b0110111, rd, imm)
