@@ -13,11 +13,11 @@ macro_rules! mmathi_impl {
     };
 }
 
-mmathi_impl!(mul, 0b000);
-mmathi_impl!(mulh, 0b001);
-mmathi_impl!(mulhsu, 0b010);
-mmathi_impl!(mulhu, 0b011);
-mmathi_impl!(div, 0b100);
-mmathi_impl!(divu, 0b101);
-mmathi_impl!(rem, 0b110);
-mmathi_impl!(remu, 0b111);
+mmathi_impl!(mul    , 0b000);
+mmathi_impl!(mulh   , 0b001);
+mmathi_impl!(mulhsu , 0b010);
+mmathi_impl!(mulhu  , 0b011);
+mmathi_impl!(div    , 0b100);
+mmathi_impl!(divu   , 0b101);
+mmathi_impl!(rem    , 0b110);
+mmathi_impl!(remu   , 0b111);

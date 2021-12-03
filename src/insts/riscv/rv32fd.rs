@@ -55,11 +55,11 @@ pub fn fsqrt_s(rm: u8, rd: Reg, rs1: Reg) -> Inst {
     fmathi(rm, rd, rs1, 0b00000, 0b0001100)
 }
 
-fmathi_rm_imm_impl!(fsgnj_s, 0b000, 0b0010000);
+fmathi_rm_imm_impl!(fsgnj_s , 0b000, 0b0010000);
 fmathi_rm_imm_impl!(fsgnjn_s, 0b001, 0b0010000);
 fmathi_rm_imm_impl!(fsgnjx_s, 0b010, 0b0010000);
-fmathi_rm_imm_impl!(fmin_s, 0b000, 0b0010100);
-fmathi_rm_imm_impl!(fmax_s, 0b001, 0b0010100);
+fmathi_rm_imm_impl!(fmin_s  , 0b000, 0b0010100);
+fmathi_rm_imm_impl!(fmax_s  , 0b001, 0b0010100);
 
 pub fn fcvt_w_s(rm: u8, rd: Reg, rs1: Reg) -> Inst {
     fmathi(rm, rd, rs1, 0b00000, 0b1100000)
@@ -139,11 +139,11 @@ pub fn fsqrt_d(rm: u8, rd: Reg, rs1: Reg) -> Inst {
     fmathi(rm, rd, rs1, 0b00000, 0b0001101)
 }
 
-fmathi_rm_imm_impl!(fsgnj_d, 0b000, 0b0010001);
+fmathi_rm_imm_impl!(fsgnj_d , 0b000, 0b0010001);
 fmathi_rm_imm_impl!(fsgnjn_d, 0b001, 0b0010001);
 fmathi_rm_imm_impl!(fsgnjx_d, 0b010, 0b0010001);
-fmathi_rm_imm_impl!(fmin_d, 0b000, 0b0010101);
-fmathi_rm_imm_impl!(fmax_d, 0b001, 0b0010101);
+fmathi_rm_imm_impl!(fmin_d  , 0b000, 0b0010101);
+fmathi_rm_imm_impl!(fmax_d  , 0b001, 0b0010101);
 
 pub fn fcvt_s_d(rm: u8, rd: Reg, rs1: Reg) -> Inst {
     fmathi(rm, rd, rs1, 0b00001, 0b0100000)
