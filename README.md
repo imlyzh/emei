@@ -10,7 +10,7 @@ warning: **only supported little ending byte array output**.
 
 - [x] rv32i
   - [x] m extension
-  - [ ] a extension
+  - [x] a extension
   - [x] f extension
   - [x] d extension
   - [ ] c extension
