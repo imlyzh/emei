@@ -127,8 +127,8 @@ pub fn cr(opcode: u8, rs2: Reg, rd: Reg, funct4: u8) -> CInst {
     r
 }
 
-pub fn ci(nzimm0_4: u8, rd: Reg, nzimm_5: u8, code: u8) -> CInst {
-    let mut r = 0;
+pub fn ci(opcode: u8, nzimm0_4: u8, rd: Reg, nzimm_5: u8, code: u8) -> CInst {
+    let mut r = opcode;
     r |= ((nzimm0_4 & 0b11111) as u16) << 2;
     r |= ((rd.0 & 0b11111) as u16) << 7;
     r |= ((nzimm_5 & 0b1) as u16) << 12;
