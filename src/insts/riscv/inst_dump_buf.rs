@@ -9,7 +9,7 @@ use crate::insts::{LinkError, riscv::rv32i::branch};
 use super::{Inst, CInst, registers::Reg};
 
 
-#[derive(Debug, Clone, Default)]
+#[derive(Debug, Clone)]
 pub struct JumpInst {
     pub opcodes: u8,
     pub funct: u8,

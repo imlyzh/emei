@@ -82,16 +82,16 @@ mathi_impl!(xori, 0b100);
 mathi_impl!(ori, 0b110);
 mathi_impl!(andi, 0b111);
 
-pub fn slli(rd: Reg, rs1: Reg, shamt: u16) -> Inst {
-    r(0b0010011, rd, 0b001, rs1, shamt as u8, 0b0)
+pub fn slli(rd: Reg, rs1: Reg, shamt: u8) -> Inst {
+    r(0b0010011, rd, 0b001, rs1, Reg::new(shamt), 0b0)
 }
 
-pub fn srli(rd: Reg, rs1: Reg, shamt: u16) -> Inst {
-    r(0b0010011, rd, 0b101, rs1, shamt as u8, 0b0)
+pub fn srli(rd: Reg, rs1: Reg, shamt: u8) -> Inst {
+    r(0b0010011, rd, 0b101, rs1, Reg::new(shamt), 0b0)
 }
 
-pub fn srai(rd: Reg, rs1: Reg, shamt: u16) -> Inst {
-    r(0b0010011, rd, 0b101, rs1, shamt as u8, 0b0100000)
+pub fn srai(rd: Reg, rs1: Reg, shamt: u8) -> Inst {
+    r(0b0010011, rd, 0b101, rs1, Reg::new(shamt), 0b0100000)
 }
 
 pub fn math(funct3: u8, funct7: u8, rd: Reg, rs1: Reg, rs2: Reg) -> Inst {
@@ -119,19 +119,19 @@ math_impl!(and, 0b111, 0b0000000);
 
 pub fn fence(pred: u8, succ: u8) -> Inst {
     let succ = succ & 0b11111;
-    r(0b0001111, 0b00000, 0b000, 0b00000, pred, succ)
+    r(0b0001111, Reg::new(0b00000), 0b000, Reg::new(0b00000), Reg::new(pred), Reg::new(succ).0)
 }
 
 pub fn fence_i() -> Inst {
-    i(0b0001111, 0b00000, 0b001, 0b00000, 0b0)
+    i(0b0001111, Reg::new(0b00000), 0b001, Reg::new(0b00000), 0b0)
 }
 
 pub fn ecall() -> Inst {
-    i(0b1110011, 0b00000, 0b000, 0b00000, 0b0)
+    i(0b1110011, Reg::new(0b00000), 0b000, Reg::new(0b00000), 0b0)
 }
 
 pub fn ebreak() -> Inst {
-    i(0b1110011, 0b00000, 0b000, 0b00000, 0b1)
+    i(0b1110011, Reg::new(0b00000), 0b000, Reg::new(0b00000), 0b1)
 }
 
 pub fn csrrw(rd: Reg, rs1: Reg, csr: u16) -> Inst {
@@ -147,14 +147,14 @@ pub fn csrrc(rd: Reg, rs1: Reg, csr: u16) -> Inst {
 }
 
 pub fn csrrwi(rd: Reg, zimm: u8, csr: u16) -> Inst {
-    i(0b1110011, rd, 0b101, zimm, csr)
+    i(0b1110011, rd, 0b101, Reg::new(zimm), csr)
 }
 
 pub fn cssrrsi(rd: Reg, zimm: u8, csr: u16) -> Inst {
-    i(0b1110011, rd, 0b110, zimm, csr)
+    i(0b1110011, rd, 0b110, Reg::new(zimm), csr)
 }
 
 pub fn csrrci(rd: Reg, zimm: u8, csr: u16) -> Inst {
-    i(0b1110011, rd, 0b111, zimm, csr)
+    i(0b1110011, rd, 0b111, Reg::new(zimm), csr)
 }
 

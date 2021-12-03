@@ -52,7 +52,7 @@ fmathi_imm_impl!(fmul_s, 0b0001000);
 fmathi_imm_impl!(fdiv_s, 0b0001100);
 
 pub fn fsqrt_s(rm: u8, rd: Reg, rs1: Reg) -> Inst {
-    fmathi(rm, rd, rs1, 0b00000, 0b0001100)
+    fmathi(rm, rd, rs1, Reg::new(0b00000), 0b0001100)
 }
 
 fmathi_rm_imm_impl!(fsgnj_s , 0b000, 0b0010000);
@@ -62,15 +62,15 @@ fmathi_rm_imm_impl!(fmin_s  , 0b000, 0b0010100);
 fmathi_rm_imm_impl!(fmax_s  , 0b001, 0b0010100);
 
 pub fn fcvt_w_s(rm: u8, rd: Reg, rs1: Reg) -> Inst {
-    fmathi(rm, rd, rs1, 0b00000, 0b1100000)
+    fmathi(rm, rd, rs1, Reg::new(0b00000), 0b1100000)
 }
 
 pub fn fcvt_wu_s(rm: u8, rd: Reg, rs1: Reg) -> Inst {
-    fmathi(rm, rd, rs1, 0b00001, 0b1100000)
+    fmathi(rm, rd, rs1, Reg::new(0b00001), 0b1100000)
 }
 
 pub fn fmv_x_s(rd: Reg, rs1: Reg) -> Inst {
-    fmathi(0b000, rd, rs1, 0b00000, 0b1110000)
+    fmathi(0b000, rd, rs1, Reg::new(0b00000), 0b1110000)
 }
 
 pub fn feq_s(rd: Reg, rs1: Reg, rs2: Reg) -> Inst {
@@ -86,19 +86,19 @@ pub fn fle_s(rd: Reg, rs1: Reg, rs2: Reg) -> Inst {
 }
 
 pub fn fclass_s(rd: Reg, rs1: Reg) -> Inst {
-    fmathi(0b001, rd, rs1, 0b00000, 0b1110000)
+    fmathi(0b001, rd, rs1, Reg::new(0b00000), 0b1110000)
 }
 
 pub fn fcvt_s_w(rm: u8, rd: Reg, rs1: Reg) -> Inst {
-    fmathi(rm, rd, rs1, 0b00000, 0b1101000)
+    fmathi(rm, rd, rs1, Reg::new(0b00000), 0b1101000)
 }
 
 pub fn fcvt_s_wu(rm: u8, rd: Reg, rs1: Reg) -> Inst {
-    fmathi(rm, rd, rs1, 0b00001, 0b1101000)
+    fmathi(rm, rd, rs1, Reg::new(0b00001), 0b1101000)
 }
 
 pub fn fmv_w_x(rd: Reg, rs1: Reg) -> Inst {
-    fmathi(0b000, rd, rs1, 0b00000, 0b1111000)
+    fmathi(0b000, rd, rs1, Reg::new(0b00000), 0b1111000)
 }
 
 
@@ -136,7 +136,7 @@ fmathi_imm_impl!(fmul_d, 0b0001001);
 fmathi_imm_impl!(fdiv_d, 0b0001101);
 
 pub fn fsqrt_d(rm: u8, rd: Reg, rs1: Reg) -> Inst {
-    fmathi(rm, rd, rs1, 0b00000, 0b0001101)
+    fmathi(rm, rd, rs1, Reg::new(0b00000), 0b0001101)
 }
 
 fmathi_rm_imm_impl!(fsgnj_d , 0b000, 0b0010001);
@@ -146,11 +146,11 @@ fmathi_rm_imm_impl!(fmin_d  , 0b000, 0b0010101);
 fmathi_rm_imm_impl!(fmax_d  , 0b001, 0b0010101);
 
 pub fn fcvt_s_d(rm: u8, rd: Reg, rs1: Reg) -> Inst {
-    fmathi(rm, rd, rs1, 0b00001, 0b0100000)
+    fmathi(rm, rd, rs1, Reg::new(0b00001), 0b0100000)
 }
 
 pub fn fcvt_d_s(rm: u8, rd: Reg, rs1: Reg) -> Inst {
-    fmathi(rm, rd, rs1, 0b00000, 0b0100001)
+    fmathi(rm, rd, rs1, Reg::new(0b00000), 0b0100001)
 }
 
 pub fn feq_d(rd: Reg, rs1: Reg, rs2: Reg) -> Inst {
@@ -166,21 +166,21 @@ pub fn fle_d(rd: Reg, rs1: Reg, rs2: Reg) -> Inst {
 }
 
 pub fn fclass_d(rd: Reg, rs1: Reg) -> Inst {
-    fmathi(0b001, rd, rs1, 0b00000, 0b1110001)
+    fmathi(0b001, rd, rs1, Reg::new(0b00000), 0b1110001)
 }
 
 pub fn fcvt_w_d(rm: u8, rd: Reg, rs1: Reg) -> Inst {
-    fmathi(rm, rd, rs1, 0b00000, 0b1100001)
+    fmathi(rm, rd, rs1, Reg::new(0b00000), 0b1100001)
 }
 
 pub fn fcvt_wu_d(rm: u8, rd: Reg, rs1: Reg) -> Inst {
-    fmathi(rm, rd, rs1, 0b00001, 0b1100001)
+    fmathi(rm, rd, rs1, Reg::new(0b00001), 0b1100001)
 }
 
 pub fn fmv_d_w(rm: u8, rd: Reg, rs1: Reg) -> Inst {
-    fmathi(rm, rd, rs1, 0b00000, 0b1101001)
+    fmathi(rm, rd, rs1, Reg::new(0b00000), 0b1101001)
 }
 
 pub fn fmv_d_wu(rm: u8, rd: Reg, rs1: Reg) -> Inst {
-    fmathi(rm, rd, rs1, 0b00001, 0b1101001)
+    fmathi(rm, rd, rs1, Reg::new(0b00001), 0b1101001)
 }

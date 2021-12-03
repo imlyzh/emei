@@ -6,7 +6,7 @@ pub fn lr_w(rd: Reg, rs1: Reg, rl: u8, aq: u8) -> Inst {
     let mut funct7 = rl;
     funct7 |= aq << 1;
     funct7 |= 0b00010 << 2;
-    r(0b0101111, rd, 0b010, rs1, 0b00000, funct7)
+    r(0b0101111, rd, 0b010, rs1, Reg::new(0b00000), funct7)
 }
 
 fn atomic(rd: Reg, rs1: Reg, rs2: Reg, aq: u8, rl: u8, immcode: u8) -> Inst {

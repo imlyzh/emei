@@ -9,6 +9,8 @@ pub mod rv32v;
 
 use registers::Reg;
 
+use self::registers::CReg;
+
 
 pub type CInst = u16;
 pub type Inst = u32;
@@ -22,10 +24,10 @@ pub fn r(
     funct7: u8
 ) -> Inst {
     let mut r = (opcode & 0b111111) as u32;
-    r |= ((rd & 0b11111) as u32) << 6;
+    r |= ((rd.0 & 0b11111) as u32) << 6;
     r |= ((funct3 & 0b111) as u32) << 11;
-    r |= ((rs1 & 0b11111) as u32) << 14;
-    r |= ((rs2 & 0b11111) as u32) << 19;
+    r |= ((rs1.0 & 0b11111) as u32) << 14;
+    r |= ((rs2.0 & 0b11111) as u32) << 19;
     r |= ((funct7 & 0b1111111) as u32) << 24;
     r
 }
@@ -39,7 +41,7 @@ pub fn r4(
     rs3: Reg,
     mut funct7: u8
 ) -> Inst {
-    funct7 |= rs3 << 2;
+    funct7 |= rs3.0 << 2;
     r(opcode, rd, rm, rs1, rs2, funct7)
 }
 
@@ -51,9 +53,9 @@ pub fn i(
     imm: u16,
 ) -> Inst {
     let mut r = opcode as u32;
-    r |= ((rd & 0b11111) as u32) << 6;
+    r |= ((rd.0 & 0b11111) as u32) << 6;
     r |= ((funct3 & 0b111) as u32) << 11;
-    r |= ((rs1 & 0b11111) as u32) << 14;
+    r |= ((rs1.0 & 0b11111) as u32) << 14;
     r |= ((imm & 0b11111111111) as u32) << 19;
     r
 }
@@ -69,8 +71,8 @@ pub fn s(
     let mut r = opcode as u32;
     r |= ((imm0_4 & 0b11111) as u32) << 6;
     r |= ((funct3 & 0b111) as u32) << 11;
-    r |= ((rs1 & 0b11111) as u32) << 14;
-    r |= ((rs2 & 0b11111) as u32) << 19;
+    r |= ((rs1.0 & 0b11111) as u32) << 14;
+    r |= ((rs2.0 & 0b11111) as u32) << 19;
     r |= ((imm5_11 & 0b1111111) as u32) << 24;
     r
 }
@@ -81,7 +83,7 @@ pub fn u(
     imm: u32,
 ) -> Inst {
     let mut r = opcode as u32;
-    r |= ((rd & 0b11111) as u32) << 6;
+    r |= ((rd.0 & 0b11111) as u32) << 6;
     r |= (imm << 20) >> 9;
     r
 }
@@ -115,4 +117,55 @@ pub fn j(
     imm |= (imm1_10 as u32) << 9;
     imm |= (imm20 as u32) << 19;
     u(opcode, rd, imm)
+}
+
+pub fn cr(opcode: u8, rs2: Reg, rd: Reg, funct4: u8) -> CInst {
+    let mut r = opcode as u16;
+    r |= ((rs2.0 & 0b11111) as u16) << 2;
+    r |= ((rd.0 & 0b11111) as u16) << 7;
+    r |= ((funct4 & 0b1111) as u16) << 12;
+    r
+}
+
+pub fn ci(nzimm0_4: u8, rd: Reg, nzimm_5: u8, code: u8) -> CInst {
+    let mut r = 0;
+    r |= ((nzimm0_4 & 0b11111) as u16) << 2;
+    r |= ((rd.0 & 0b11111) as u16) << 7;
+    r |= ((nzimm_5 & 0b1) as u16) << 12;
+    r |= ((code & 0b1111) as u16) << 13;
+    r
+}
+
+pub fn css(opcode: u8, rs2: Reg, imm0_4: u8, funct3: u8) -> CInst {
+    let mut r = opcode as u16;
+    r |= ((rs2.0 & 0b11111) as u16) << 2;
+    r |= ((imm0_4 & 0b11111) as u16) << 7;
+    r |= ((funct3 & 0b111) as u16) << 13;
+    r
+}
+
+pub fn ciw(opcode: u8, rdc: CReg, imm: u8, funct3: u8) -> CInst {
+    let mut r = opcode as u16;
+    r |= ((rdc.0 & 0b111) as u16) << 2;
+    r |= ((imm & 0b11111111) as u16) << 5;
+    r |= ((funct3 & 0b111) as u16) << 13;
+    r
+}
+
+// pub fn cls(opcode: u8, rdc: Reg, imm: )
+
+pub fn cb(opcode: u8, offset0: u8, rs1c: CReg, offset1: u8, funct3: u8) -> CInst {
+    let mut r = opcode as u16;
+    r |= ((offset0 & 0b11111) as u16) << 2;
+    r |= ((rs1c.0 & 0b111) as u16) << 7;
+    r |= ((offset1 & 0b11111) as u16) << 10;
+    r |= ((funct3 & 0b111) as u16) << 13;
+    r
+}
+
+pub fn cj(opcode: u8, offset: u16, funct3: u8) -> CInst {
+    let mut r = opcode as u16;
+    r |= ((offset & 0b11111111111) as u16) << 2;
+    r |= ((funct3 & 0b111) as u16) << 13;
+    r
 }

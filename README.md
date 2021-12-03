@@ -14,6 +14,7 @@ warning: **only supported little ending byte array output**.
   - [x] f extension
   - [x] d extension
   - [ ] c extension
+  - [ ] v extension
 - [ ] rv64i
 - [ ] rv128i
 
