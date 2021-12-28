@@ -14,6 +14,9 @@ readme = "README.md"
 name = "libemei"
 path = "src/lib.rs"
 
+[[example]]
+name = "page_addr"
+path = "examples/page_addr.rs"
 
 [dependencies]
 lazy_static = "1.4"

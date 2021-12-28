@@ -11,8 +11,10 @@ pub fn c_nop() -> CInst {
     c_addi(Reg::new(X0), 0)
 }
 
+/*
 pub fn c_jal(offset: i16) -> CInst {
     // let imm5 = offset as u16 >> 5;
     // let imm11 = (offset as u16) >> 11;
     cj(0b01, todo!(), 0b001)
 }
+*/

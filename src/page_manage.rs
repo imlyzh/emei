@@ -48,7 +48,7 @@ impl PageSize {
 
 #[derive(Debug, Clone, Eq, PartialEq)]
 pub struct PageHandle {
-    ptr: *mut u8,
+    pub ptr: *mut u8,
     pub len: usize,
     pub cap: usize,
 }
