@@ -216,7 +216,7 @@ impl Inst {
             prefixes,
             opcode,
             modrm: mod_rm,
-            sib: sib,
+            sib,
             disp,
             imm,
         }
