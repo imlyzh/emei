@@ -3,7 +3,7 @@ pub mod registers;
 pub mod untils;
 pub mod rv32;
 pub mod rv64;
-pub mod rv128;
+// pub mod rv128;
 
 use registers::Reg;
 
@@ -116,6 +116,7 @@ pub fn j(
     imm |= (imm20 as u32) << 19;
     u(opcode, rd, imm)
 }
+
 
 pub fn cr(opcode: u8, rs2: Reg, rd: Reg, funct4: u8) -> CInst {
     let mut r = opcode as u16;

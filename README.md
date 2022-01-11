@@ -15,8 +15,16 @@ warning: **only supported little ending byte array output**.
   - [x] d extension
   - [ ] c extension
   - [ ] v extension
-- [ ] rv64i
-- [ ] rv128i
+  - [ ] p extension
+- [x] rv64i
+  - [x] m extension
+  - [x] a extension
+  - [x] f extension
+  - [x] d extension
+  - [ ] c extension
+  - [ ] v extension
+  - [ ] p extension
+<!-- - [ ] rv128i -->
 
 Please refer to the riscv arch manual.
 
