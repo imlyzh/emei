@@ -117,6 +117,10 @@ warning: **unsupported x87 fpu float operator**.
 - sqrtss/sqrtsd
 - cmpss/cmpsd
 
+#### sse simd instruction
+
+- movupd/movupd_rev
+
 ## Example
 
 **look src/lib.rs**.
