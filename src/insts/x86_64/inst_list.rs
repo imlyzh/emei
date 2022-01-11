@@ -7,6 +7,7 @@ use super::{registers::*, Inst, Op1};
 
 /// ## mov
 /// - mov
+/// mov op1(reg/mem) into op2(reg)
 pub fn mov(is_atomic: bool, is_long_mode: bool, op1: Op1, op2: TargetReg) -> Vec<u8> {
     Inst {
         atomic: is_atomic,
@@ -1524,6 +1525,7 @@ pub fn cmpss(op1: Op1, op2: RegisterXmm, imm: FcmpOp) -> Vec<u8> {
 
 /// - cmpsd
 /// cmpsd xmm1, xmm2/m64
+/// cmpsd(xmm2/m64, xmm1)
 /// Compare scalar double-precision floating-point value from xmm2 to xmm1 register.
 pub fn cmpsd(op1: Op1, op2: RegisterXmm, imm: FcmpOp) -> Vec<u8> {
     SSEInst {
@@ -1538,10 +1540,41 @@ pub fn cmpsd(op1: Op1, op2: RegisterXmm, imm: FcmpOp) -> Vec<u8> {
 
 /// - sqrtss
 /// sqrtss xmm1, xmm2/m32
+/// sqrtss(xmm2/mem, xmm1)
 /// Compute square root of scalar single-precision floating-point value in xmm2 and store result in xmm1.
 pub fn sqrtss(op1: Op1, op2: RegisterXmm) -> Vec<u8> {
     SSEInst {
         opcode: vec![0xf3, 0x0f, 0x51],
+        op1: Some(op1),
+        op2: Some(TargetReg::from(op2 as u8)),
+        imm: None,
+    }
+    .into_raw()
+    .encode()
+}
+
+/// ## SIMD Inst
+/// - movupd
+/// movupd xmm1, xmm2/m128
+/// movupd(xmm2/m128, xmm1)
+/// Move unaligned packed double-precision floating-point values from xmm2/mem to xmm1.
+pub fn movupd(op1: Op1, op2: RegisterXmm) -> Vec<u8> {
+    SSEInst {
+        opcode: vec![0x66, 0x0F, 0x10],
+        op1: Some(op1),
+        op2: Some(TargetReg::from(op2 as u8)),
+        imm: None,
+    }
+    .into_raw()
+    .encode()
+}
+
+/// movupd xmm2/m128, xmm1
+/// movupd_rev(xmm2/m128, xmm1)
+/// Move unaligned packed double-precision floating-point from xmm1 to xmm2/mem.
+pub fn movupd_rev(op1: Op1, op2: RegisterXmm) -> Vec<u8> {
+    SSEInst {
+        opcode: vec![0x66, 0x0F, 0x10],
         op1: Some(op1),
         op2: Some(TargetReg::from(op2 as u8)),
         imm: None,

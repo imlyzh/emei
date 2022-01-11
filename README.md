@@ -32,6 +32,12 @@ Please refer to the riscv arch manual.
 
 warning: **unsupported x87 fpu float operator**.
 
+#### insts rule
+
+`inst dst, src`=`inst(src, dst)`
+
+#### insts
+
 - mov
   - mov
   - mov_zero_extend_bit8/16
