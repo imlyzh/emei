@@ -1,5 +1,8 @@
 use crate::insts::riscv::registers::Reg;
 use crate::insts::riscv::*;
+use crate::insts::riscv::untils::*;
+
+use crate::{ld_impl, st_impl};
 
 pub fn lui(rd: Reg, imm: u32) -> Inst {
     u(0b0110111, rd, imm)
@@ -21,13 +24,6 @@ pub fn jalr(rd: Reg, rs1: Reg, imm: u16) -> Inst {
     i(0b1100111, rd, 000, rs1, imm)
 }
 
-pub fn branch(funct: u8, rs1: Reg, rs2: Reg, imm: i16) -> Inst {
-    let imm11 = ((imm >> 11) & 0b1) as u8;
-    let imm1_4 = ((imm >> 1) & 0b1111) as u8;
-    let imm5_10 = ((imm >> 5) & 0b111111) as u8;
-    let imm12 = ((imm >> 15) & 0b1) as u8;
-    b(0b1100011, imm11, imm1_4, funct, rs1, rs2, imm5_10, imm12)
-}
 
 macro_rules! br_impl {
     ($name:ident, $funct:expr) => {
@@ -45,25 +41,18 @@ br_impl!(bltu, 0b110);
 br_impl!(bgeu, 0b111);
 
 
-pub fn load_data(funct: u8, rd: Reg, rs1: Reg, imm: u16) -> Inst {
-    i(0b0000011, rd, funct, rs1, imm)
-}
-
-macro_rules! ld_impl {
-    ($name:ident, $funct:expr) => {
-        pub fn $name(rd: Reg, rs1: Reg, imm: u16) -> Inst {
-            load_data($funct, rd, rs1, imm)
-        }
-    };
-}
-
 ld_impl!(lb, 0b000);
 ld_impl!(lh, 0b001);
 ld_impl!(lw, 0b010);
 ld_impl!(lbu, 0b100);
 ld_impl!(lhu, 0b101);
 
-fn mathi(funct: u8, rd: Reg, rs1: Reg, imm: u16) -> Inst {
+st_impl!(sb, 0b000);
+st_impl!(sh, 0b001);
+st_impl!(sw, 0b010);
+
+
+pub fn mathi(funct: u8, rd: Reg, rs1: Reg, imm: u16) -> Inst {
     i(0b0010011, rd, funct, rs1, imm)
 }
 
@@ -82,6 +71,7 @@ mathi_impl!(xori, 0b100);
 mathi_impl!(ori, 0b110);
 mathi_impl!(andi, 0b111);
 
+
 pub fn slli(rd: Reg, rs1: Reg, shamt: u8) -> Inst {
     r(0b0010011, rd, 0b001, rs1, Reg::new(shamt), 0b0)
 }
@@ -93,6 +83,7 @@ pub fn srli(rd: Reg, rs1: Reg, shamt: u8) -> Inst {
 pub fn srai(rd: Reg, rs1: Reg, shamt: u8) -> Inst {
     r(0b0010011, rd, 0b101, rs1, Reg::new(shamt), 0b0100000)
 }
+
 
 pub fn math(funct3: u8, funct7: u8, rd: Reg, rs1: Reg, rs2: Reg) -> Inst {
     r(0b0110011, rd, funct3, rs1, rs2, funct7)
@@ -116,6 +107,7 @@ math_impl!(srl, 0b101, 0b0000000);
 math_impl!(sra, 0b101, 0b0100000);
 math_impl!(or, 0b110, 0b0000000);
 math_impl!(and, 0b111, 0b0000000);
+
 
 pub fn fence(pred: u8, succ: u8) -> Inst {
     let succ = succ & 0b11111;

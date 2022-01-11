@@ -1,5 +1,6 @@
 use crate::insts::riscv::registers::Reg;
 use crate::insts::riscv::*;
+use crate::insts::riscv::untils::*;
 
 
 pub fn flw(rd: Reg, rs1: Reg, imm: u16) -> Inst {
@@ -24,10 +25,6 @@ pub fn fnmsub_s(rd: Reg, rm: u8, rs1: Reg, rs2: Reg, rs3: Reg) -> Inst {
 
 pub fn fnmadd_s(rd: Reg, rm: u8, rs1: Reg, rs2: Reg, rs3: Reg) -> Inst {
     r4(0b1001111, rd, rm, rs1, rs2, rs3, 0b00)
-}
-
-fn fmathi(rm: u8, rd: Reg, rs1: Reg, rs2: Reg, imm: u8) -> Inst {
-    r(0b1010011, rd, rm, rs1, rs2, imm)
 }
 
 macro_rules! fmathi_imm_impl {
