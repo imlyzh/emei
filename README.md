@@ -28,6 +28,8 @@ Please refer to the riscv arch manual.
 
 ### x86_64
 
+warning: **x86_64 only supported little ending byte array output**.
+
 warning: **unsupported x87 fpu float operator**.
 
 #### insts rule
