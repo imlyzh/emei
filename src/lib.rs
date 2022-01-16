@@ -1,6 +1,9 @@
+#![doc=include_str!("../README.md")]
+
 pub mod insts;
 pub mod page_manage;
 
+/*
 macro_rules! debug_code_no_ret {
     ($code:expr) => {
         let page_size = PageSize::from_system();
@@ -11,6 +14,7 @@ macro_rules! debug_code_no_ret {
         dbg!((code)());
     };
 }
+ */
 
 #[test]
 #[cfg(target_arch = "x86_64")]
@@ -55,6 +59,17 @@ fn x86_64_test() {
 }
 
 #[test]
+#[cfg(target_arch = "riscv")]
+fn rv_add_test() {
+    use insts::riscv::rv32::rv32i::*;
+    use insts::riscv::registers::*;
+
+    use crate::page_manage::PageHandle;
+    use crate::page_manage::PageSize;
+}
+
+/*
+#[test]
 #[cfg(any(target_arch = "x86_64", target_arch = "x86"))]
 fn nop_length_test() {
     use crate::insts::x86_64::inst_list::*;
@@ -69,3 +84,4 @@ fn nop_length_test() {
     debug_code_no_ret!(nop8());
     debug_code_no_ret!(nop9());
 }
+ */
