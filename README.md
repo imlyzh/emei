@@ -4,8 +4,6 @@ The 峨眉 (EMei) JIT/AOT backend codegen framework.
 
 ## Support Instructions
 
-warning: **only supported little ending byte array output**.
-
 ### risc-v
 
 - [x] rv32i
