@@ -21,7 +21,7 @@ pub fn r(
     rs2: Reg,
     funct7: u8
 ) -> Inst {
-    let mut r = (opcode & 0b111111) as u32;
+    let mut r = (opcode & 0b1111111) as u32;
     r |= ((rd.0 & 0b11111) as u32) << 7;
     r |= ((funct3 & 0b111) as u32) << 12;
     r |= ((rs1.0 & 0b11111) as u32) << 15;
@@ -50,7 +50,7 @@ pub fn i(
     rs1: Reg,
     imm: u16,
 ) -> Inst {
-    let mut r = opcode as u32;
+    let mut r = (opcode & 0b1111111) as u32;
     r |= ((rd.0 & 0b11111) as u32) << 7;
     r |= ((funct3 & 0b111) as u32) << 12;
     r |= ((rs1.0 & 0b11111) as u32) << 15;
@@ -66,7 +66,7 @@ pub fn s(
     rs2: Reg,
     imm5_11: u8,
 ) -> Inst {
-    let mut r = opcode as u32;
+    let mut r = (opcode & 0b1111111) as u32;
     r |= ((imm0_4 & 0b11111) as u32) << 7;
     r |= ((funct3 & 0b111) as u32) << 12;
     r |= ((rs1.0 & 0b11111) as u32) << 15;
@@ -80,7 +80,7 @@ pub fn u(
     rd: Reg,
     imm: u32,
 ) -> Inst {
-    let mut r = opcode as u32;
+    let mut r = (opcode & 0b1111111) as u32;
     r |= ((rd.0 & 0b11111) as u32) << 7;
     r |= imm << 12;
     r
