@@ -22,6 +22,10 @@ path = "examples/page_addr.rs"
 name = "codegen"
 path = "examples/codegen.rs"
 
+[[example]]
+name = "gen_lemu_test"
+path = "examples/gen_lemu_test.rs"
+
 [dependencies]
 lazy_static = "1.4"
 

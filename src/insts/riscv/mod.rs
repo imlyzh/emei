@@ -22,11 +22,11 @@ pub fn r(
     funct7: u8
 ) -> Inst {
     let mut r = (opcode & 0b111111) as u32;
-    r |= ((rd.0 & 0b11111) as u32) << 6;
-    r |= ((funct3 & 0b111) as u32) << 11;
-    r |= ((rs1.0 & 0b11111) as u32) << 14;
-    r |= ((rs2.0 & 0b11111) as u32) << 19;
-    r |= ((funct7 & 0b1111111) as u32) << 24;
+    r |= ((rd.0 & 0b11111) as u32) << 7;
+    r |= ((funct3 & 0b111) as u32) << 12;
+    r |= ((rs1.0 & 0b11111) as u32) << 15;
+    r |= ((rs2.0 & 0b11111) as u32) << 20;
+    r |= ((funct7 & 0b1111111) as u32) << 25;
     r
 }
 
@@ -51,10 +51,10 @@ pub fn i(
     imm: u16,
 ) -> Inst {
     let mut r = opcode as u32;
-    r |= ((rd.0 & 0b11111) as u32) << 6;
-    r |= ((funct3 & 0b111) as u32) << 11;
-    r |= ((rs1.0 & 0b11111) as u32) << 14;
-    r |= ((imm & 0b11111111111) as u32) << 19;
+    r |= ((rd.0 & 0b11111) as u32) << 7;
+    r |= ((funct3 & 0b111) as u32) << 12;
+    r |= ((rs1.0 & 0b11111) as u32) << 15;
+    r |= ((imm & 0b11111111111) as u32) << 20;
     r
 }
 
@@ -67,11 +67,11 @@ pub fn s(
     imm5_11: u8,
 ) -> Inst {
     let mut r = opcode as u32;
-    r |= ((imm0_4 & 0b11111) as u32) << 6;
-    r |= ((funct3 & 0b111) as u32) << 11;
-    r |= ((rs1.0 & 0b11111) as u32) << 14;
-    r |= ((rs2.0 & 0b11111) as u32) << 19;
-    r |= ((imm5_11 & 0b1111111) as u32) << 24;
+    r |= ((imm0_4 & 0b11111) as u32) << 7;
+    r |= ((funct3 & 0b111) as u32) << 12;
+    r |= ((rs1.0 & 0b11111) as u32) << 15;
+    r |= ((rs2.0 & 0b11111) as u32) << 20;
+    r |= ((imm5_11 & 0b1111111) as u32) << 25;
     r
 }
 
@@ -81,8 +81,8 @@ pub fn u(
     imm: u32,
 ) -> Inst {
     let mut r = opcode as u32;
-    r |= ((rd.0 & 0b11111) as u32) << 6;
-    r |= (imm << 20) >> 9;
+    r |= ((rd.0 & 0b11111) as u32) << 7;
+    r |= imm << 12;
     r
 }
 
