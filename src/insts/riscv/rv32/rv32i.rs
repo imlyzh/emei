@@ -13,11 +13,13 @@ pub fn auipc(rd: Reg, imm: u32) -> Inst {
 }
 
 pub fn jal(rd: Reg, imm: i32) -> Inst {
+    assert_eq!(imm & 0b1, 0, "jal imm must be 16-bit aligned");
+    dbg!(imm);
+    let imm20 = ((imm >> 31) & 0b1) as u8;
     let imm12_19 = ((imm >> 12) & 0b11111111) as u8;
     let imm11 = ((imm >> 11) & 0b1) as u8;
-    let imm1_10 = ((imm >> 1) & 0b1111111111) as u8;
-    let imm20 = ((imm >> 31) & 0b1) as u8;
-    j(0b1101111, rd, imm12_19, imm11, imm1_10, imm20)
+    let imm1_10 = ((imm >> 1) & 0b1111111111) as u16;
+    j(0b1101111, rd, dbg!(imm12_19), dbg!(imm11), dbg!(imm1_10), dbg!(imm20))
 }
 
 pub fn jalr(rd: Reg, rs1: Reg, imm: u16) -> Inst {

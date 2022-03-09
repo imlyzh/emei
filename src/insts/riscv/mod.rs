@@ -106,7 +106,7 @@ pub fn j(
     rd: Reg,
     imm12_19: u8,
     imm11: u8,
-    imm1_10: u8,
+    imm1_10: u16,
     imm20: u8,
 ) -> Inst {
     // Warning: data is not filter, Pass parameters in compliance with standards
