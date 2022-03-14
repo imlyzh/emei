@@ -116,7 +116,7 @@ pub fn fence(pred: u8, succ: u8) -> Inst {
     r(0b0001111, Reg::new(0b00000), 0b000, Reg::new(0b00000), Reg::new(pred), Reg::new(succ).0)
 }
 
-pub fn fence_i() -> Inst {
+pub fn fencei() -> Inst {
     i(0b0001111, Reg::new(0b00000), 0b001, Reg::new(0b00000), 0b0)
 }
 
