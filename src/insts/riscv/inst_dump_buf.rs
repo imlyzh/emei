@@ -89,11 +89,11 @@ impl InstBuffer {
             .insert(label, imm);
     }
 
-    pub fn dump(&self, is_little_endian: bool, buf: &mut Vec<u8>) -> Result<(), LinkError> {
+    pub fn dump(&self, buf: &mut Vec<u8>) -> Result<(), LinkError> {
         for i in self.buf.borrow().iter() {
             match i {
-                InstUnit::CInst(c) => buf.extend(&if is_little_endian { c.to_le_bytes() } else { c.to_be_bytes()}),
-                InstUnit::Inst(i) => buf.extend(&if is_little_endian { i.to_le_bytes() } else { i.to_be_bytes() }),
+                InstUnit::CInst(c) => buf.extend(c.to_le_bytes()),
+                InstUnit::Inst(i) => buf.extend(i.to_le_bytes()),
                 InstUnit::JumpInst(j, offset) => {
                     let label_offset = self.label_buf.borrow()
                         .get(&j.label)
@@ -101,7 +101,7 @@ impl InstBuffer {
                         .ok_or_else(|| LinkError(j.label.clone()))?;
                     let imm = label_offset as i64 - *offset as i64;
                     let i = branch(j.funct, j.rs1, j.rs2, imm as i16);
-                    let i = &if is_little_endian { i.to_le_bytes() } else { i.to_be_bytes() };
+                    let i = i.to_le_bytes();
                     buf.extend(i)
                 },
             }

@@ -28,6 +28,7 @@ path = "examples/gen_lemu_test.rs"
 
 [dependencies]
 lazy_static = "1.4"
+lyuu-commons = { git="https://github.com/imlyzh/lyuu-commons.git" }
 
 [target.'cfg(unix)'.dependencies]
 nix = "0.23"
