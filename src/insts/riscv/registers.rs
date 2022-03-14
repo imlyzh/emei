@@ -1,7 +1,10 @@
 
 
+pub type CReg = Reg;
+
 // 3bits
 pub type WCReg = u8;
+/*
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct CReg (pub WCReg);
@@ -18,6 +21,7 @@ impl Into<Reg> for CReg {
         Reg(self.0 + X8)
     }
 }
+ */
 
 pub const CX0: WCReg = 0;
 pub const CX1: WCReg = 1;
@@ -48,16 +52,21 @@ pub const C_SAVED_REGISTERS: [WReg; 2] = [CS0, CS1];
 // 5bits
 pub type WReg = u8;
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub struct Reg (pub WReg);
+// #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+// pub struct Reg (pub WReg);
 
+pub type Reg = lyuu_commons::isa::riscv::Reg;
+
+/*
 impl Reg {
     pub fn new(value: u8) -> Reg {
         assert!(value <= 0b11111);
         Reg(value)
     }
 }
+ */
 
+ /*
 impl TryInto<CReg> for Reg {
     type Error = ();
     fn try_into(self) -> Result<CReg, Self::Error> {
@@ -68,6 +77,7 @@ impl TryInto<CReg> for Reg {
         }
     }
 }
+ */
 
 pub const X0: WReg = 0;
 pub const X1: WReg = 1;

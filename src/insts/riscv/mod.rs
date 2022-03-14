@@ -1,4 +1,5 @@
 pub mod inst_dump_buf;
+pub mod isa_transform;
 pub mod registers;
 pub mod untils;
 pub mod rv32;

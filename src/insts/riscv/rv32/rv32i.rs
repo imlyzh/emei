@@ -22,8 +22,8 @@ pub fn jal(rd: Reg, imm: i32) -> Inst {
     j(0b1101111, rd, dbg!(imm12_19), dbg!(imm11), dbg!(imm1_10), dbg!(imm20))
 }
 
-pub fn jalr(rd: Reg, rs1: Reg, imm: u16) -> Inst {
-    i(0b1100111, rd, 000, rs1, imm)
+pub fn jalr(rd: Reg, rs1: Reg, imm: i16) -> Inst {
+    i(0b1100111, rd, 000, rs1, imm as u16)
 }
 
 
