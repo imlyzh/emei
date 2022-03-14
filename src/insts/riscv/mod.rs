@@ -49,13 +49,14 @@ pub fn i(
     rd: Reg,
     funct3: u8,
     rs1: Reg,
-    imm: u16,
+    imm: i16,
 ) -> Inst {
     let mut r = (opcode & 0b1111111) as u32;
     r |= ((rd.0 & 0b11111) as u32) << 7;
     r |= ((funct3 & 0b111) as u32) << 12;
     r |= ((rs1.0 & 0b11111) as u32) << 15;
-    r |= ((imm & 0b11111111111) as u32) << 20;
+    r |= ((imm & 0b1111111111) as u32) << 20;
+    r |= ((imm >> 15) as u32) << 31;
     r
 }
 

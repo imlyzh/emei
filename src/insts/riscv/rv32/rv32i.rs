@@ -23,7 +23,7 @@ pub fn jal(rd: Reg, imm: i32) -> Inst {
 }
 
 pub fn jalr(rd: Reg, rs1: Reg, imm: i16) -> Inst {
-    i(0b1100111, rd, 000, rs1, imm as u16)
+    i(0b1100111, rd, 000, rs1, imm)
 }
 
 
@@ -54,13 +54,13 @@ st_impl!(sh, 0b001);
 st_impl!(sw, 0b010);
 
 
-pub fn mathi(funct: u8, rd: Reg, rs1: Reg, imm: u16) -> Inst {
+pub fn mathi(funct: u8, rd: Reg, rs1: Reg, imm: i16) -> Inst {
     i(0b0010011, rd, funct, rs1, imm)
 }
 
 macro_rules! mathi_impl {
     ($name:ident, $funct:expr) => {
-        pub fn $name(rd: Reg, rs1: Reg, imm: u16) -> Inst {
+        pub fn $name(rd: Reg, rs1: Reg, imm: i16) -> Inst {
             mathi($funct, rd, rs1, imm)
         }
     };
@@ -129,26 +129,26 @@ pub fn ebreak() -> Inst {
 }
 
 pub fn csrrw(rd: Reg, rs1: Reg, csr: u16) -> Inst {
-    i(0b1110011, rd, 0b001, rs1, csr)
+    i(0b1110011, rd, 0b001, rs1, csr as i16)
 }
 
 pub fn csrrs(rd: Reg, rs1: Reg, csr: u16) -> Inst {
-    i(0b1110011, rd, 0b010, rs1, csr)
+    i(0b1110011, rd, 0b010, rs1, csr as i16)
 }
 
 pub fn csrrc(rd: Reg, rs1: Reg, csr: u16) -> Inst {
-    i(0b1110011, rd, 0b011, rs1, csr)
+    i(0b1110011, rd, 0b011, rs1, csr as i16)
 }
 
 pub fn csrrwi(rd: Reg, zimm: u8, csr: u16) -> Inst {
-    i(0b1110011, rd, 0b101, Reg::new(zimm), csr)
+    i(0b1110011, rd, 0b101, Reg::new(zimm), csr as i16)
 }
 
 pub fn cssrrsi(rd: Reg, zimm: u8, csr: u16) -> Inst {
-    i(0b1110011, rd, 0b110, Reg::new(zimm), csr)
+    i(0b1110011, rd, 0b110, Reg::new(zimm), csr as i16)
 }
 
 pub fn csrrci(rd: Reg, zimm: u8, csr: u16) -> Inst {
-    i(0b1110011, rd, 0b111, Reg::new(zimm), csr)
+    i(0b1110011, rd, 0b111, Reg::new(zimm), csr as i16)
 }
 

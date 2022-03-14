@@ -1,9 +1,4 @@
-use lyuu_commons::isa::riscv::{
-    RiscV,
-    BrType,
-    LoadType,
-    StoreType, EOpType
-};
+use lyuu_commons::isa::riscv::*;
 
 use super::{
     inst_dump_buf::InstBuffer,
@@ -44,7 +39,18 @@ impl InstBuffer {
                     StoreType::Word => lw,
                     StoreType::Double => ld,
                 }(rs1, rs2, imm)),
-            RiscV::OpI(ioptype, rd, rs1, imm) => todo!(),
+            RiscV::OpI(ioptype, rd, rs1, imm) => self.inst(
+                match ioptype {
+                    IOpType::Addi => addi,
+                    IOpType::Slti => slti,
+                    IOpType::Sltiu => sltiu,
+                    IOpType::Xori => xori,
+                    IOpType::Ori => ori,
+                    IOpType::Andi => andi,
+                    IOpType::Slli => slli(rd, rs1, imm ),
+                    IOpType::Srli => srli,
+                    IOpType::Srai => srai,
+                }(rd, rs1, imm)),
             RiscV::Op(optype, rd, rs1, rs2) => todo!(),
             RiscV::Fence(isfencei, pred, succ) => todo!(),
             RiscV::EOp(EOpType::Call) => todo!(),

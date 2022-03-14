@@ -3,7 +3,7 @@ use crate::insts::riscv::*;
 use crate::insts::riscv::untils::*;
 
 
-pub fn flw(rd: Reg, rs1: Reg, imm: u16) -> Inst {
+pub fn flw(rd: Reg, rs1: Reg, imm: i16) -> Inst {
     i(0b0000111, rd, 0b010, rs1, imm)
 }
 
@@ -102,7 +102,7 @@ pub fn fmv_w_x(rd: Reg, rs1: Reg) -> Inst {
 ///////////////////////////////////////////////////////////////////
 /// rv32d
 
-pub fn fld(rd: Reg, rs1: Reg, imm: u16) -> Inst {
+pub fn fld(rd: Reg, rs1: Reg, imm: i16) -> Inst {
     i(0b0000111, rd, 0b011, rs1, imm)
 }
 

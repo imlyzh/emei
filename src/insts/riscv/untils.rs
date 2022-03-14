@@ -11,7 +11,7 @@ pub fn branch(funct: u8, rs1: Reg, rs2: Reg, imm: i16) -> Inst {
 
 
 pub fn load_data(funct: u8, rd: Reg, rs1: Reg, imm: i16) -> Inst {
-    i(0b0000011, rd, funct, rs1, imm as u16)
+    i(0b0000011, rd, funct, rs1, imm)
 }
 
 #[macro_export]

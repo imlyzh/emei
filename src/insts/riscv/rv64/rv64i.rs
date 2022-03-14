@@ -10,13 +10,13 @@ ld_impl!(lwu, 0b110);
 
 st_impl!(sd, 0b011);
 
-pub fn mathi_64(funct: u8, rd: Reg, rs1: Reg, imm: u16) -> Inst {
+pub fn mathi_64(funct: u8, rd: Reg, rs1: Reg, imm: i16) -> Inst {
     i(0b0011011, rd, funct, rs1, imm)
 }
 
 macro_rules! mathi_64_impl {
     ($name:ident, $funct:expr) => {
-        pub fn $name(rd: Reg, rs1: Reg, imm: u16) -> Inst {
+        pub fn $name(rd: Reg, rs1: Reg, imm: i16) -> Inst {
             mathi_64($funct, rd, rs1, imm)
         }
     };

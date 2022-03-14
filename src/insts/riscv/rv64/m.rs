@@ -1,13 +1,13 @@
 use crate::insts::riscv::registers::Reg;
 use crate::insts::riscv::*;
 
-fn mmath_64(funct: u8, rd: Reg, rs1: Reg, imm: u16) -> Inst {
+fn mmath_64(funct: u8, rd: Reg, rs1: Reg, imm: i16) -> Inst {
     i(0b0111011, rd, funct, rs1, imm)
 }
 
 macro_rules! mmath_64_impl {
     ($name:ident, $funct:expr) => {
-        pub fn $name(rd: Reg, rs1: Reg, imm: u16) -> Inst {
+        pub fn $name(rd: Reg, rs1: Reg, imm: i16) -> Inst {
             mmath_64($funct, rd, rs1, imm)
         }
     };
