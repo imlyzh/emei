@@ -32,4 +32,9 @@ fn main() {
         jal(Reg::new(X0), -24),
     ];
     println!("jal -6: {:?}", inst_list);
+
+    let inst_list = [
+        jalr(Reg::new(X0), Reg::new(X0), 0),
+    ];
+    println!("jalr zero: {:?}", inst_list);
 }
