@@ -2,6 +2,7 @@ use super::{registers::Reg, *};
 
 
 pub fn branch(funct: u8, rs1: Reg, rs2: Reg, imm: i16) -> Inst {
+    let imm = imm as u16;
     let imm11 = ((imm >> 11) & 0b1) as u8;
     let imm1_4 = ((imm >> 1) & 0b1111) as u8;
     let imm5_10 = ((imm >> 5) & 0b111111) as u8;

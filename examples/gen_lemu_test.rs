@@ -37,4 +37,19 @@ fn main() {
         jalr(Reg::new(X0), Reg::new(X0), 0),
     ];
     println!("jalr zero: {:?}", inst_list);
+
+    let inst_list = [
+        beq(Reg::new(X0), Reg::new(X0), 4),
+    ];
+    println!("beqz zero: {:x?}", inst_list);
+
+    let inst_list = [
+        bne(Reg::new(X0), Reg::new(X0), 0),
+    ];
+    println!("beqz zero: {:x?}", inst_list);
+
+    let inst_list = [
+        beq(Reg::new(X0), Reg::new(X0), -8),
+    ];
+    println!("beqz zero: {:x?}", inst_list);
 }
