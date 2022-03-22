@@ -6,7 +6,11 @@ use std::{
 
 use crate::insts::{LinkError, riscv::untils::branch};
 
-use super::{Inst, CInst, registers::Reg};
+use super::{
+    registers::Reg,
+    Inst,
+    // CInst,
+};
 
 
 #[derive(Debug, Clone)]
@@ -20,7 +24,7 @@ pub struct JumpInst {
 
 #[derive(Debug, Clone)]
 pub enum InstUnit {
-    CInst(CInst),
+    // CInst(CInst),
     Inst(Inst),
     JumpInst(JumpInst, u32),
 }
@@ -28,7 +32,7 @@ pub enum InstUnit {
 impl InstUnit {
     pub fn size(&self) -> usize {
         match self {
-            InstUnit::CInst(_) => 2,
+            // InstUnit::CInst(_) => 2,
             InstUnit::Inst(_) => 4,
             InstUnit::JumpInst(_jump_inst, _) => 4,
         }
@@ -50,6 +54,7 @@ impl InstBuffer {
         self.len() == 0
     }
 
+    /*
     pub fn cinst(&self, i: CInst) {
         let boxed_inst = InstUnit::CInst(i);
         self.offset
@@ -58,6 +63,7 @@ impl InstBuffer {
             .add_assign(boxed_inst.size() as u32);
         self.buf.borrow_mut().push(boxed_inst);
     }
+     */
 
     pub fn inst(&self, i: Inst) {
         let boxed_inst = InstUnit::Inst(i);
@@ -92,7 +98,7 @@ impl InstBuffer {
     pub fn dump(&self, buf: &mut Vec<u8>) -> Result<(), LinkError> {
         for i in self.buf.borrow().iter() {
             match i {
-                InstUnit::CInst(c) => buf.extend(c.to_le_bytes()),
+                // InstUnit::CInst(c) => buf.extend(c.to_le_bytes()),
                 InstUnit::Inst(i) => buf.extend(i.to_le_bytes()),
                 InstUnit::JumpInst(j, offset) => {
                     let label_offset = self.label_buf.borrow()

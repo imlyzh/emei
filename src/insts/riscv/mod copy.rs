@@ -7,7 +7,6 @@ pub mod rv64;
 // pub mod rv128;
 
 use registers::Reg;
-use lyuu_commons::isa::riscv::inst_binary::*;
 
 
 // pub type CInst = u16;
@@ -22,14 +21,13 @@ pub fn r(
     rs2: Reg,
     funct7: u8
 ) -> Inst {
-    let mut r = RType::new();
-    r.set_opcode_checked(opcode).unwrap();
-    r.set_rd_checked(rd.0).unwrap();
-    r.set_funct3_checked(funct3).unwrap();
-    r.set_rs1_checked(rs1.0).unwrap();
-    r.set_rs2_checked(rs2.0).unwrap();
-    r.set_funct7_checked(funct7).unwrap();
-    u32::from_le_bytes(r.into_bytes())
+    let mut r = (opcode & 0b1111111) as u32;
+    r |= ((rd.0 & 0b11111) as u32) << 7;
+    r |= ((funct3 & 0b111) as u32) << 12;
+    r |= ((rs1.0 & 0b11111) as u32) << 15;
+    r |= ((rs2.0 & 0b11111) as u32) << 20;
+    r |= ((funct7 & 0b1111111) as u32) << 25;
+    r
 }
 
 pub fn r4(
@@ -52,16 +50,13 @@ pub fn i(
     rs1: Reg,
     imm: i16,
 ) -> Inst {
-    let mut r = IType::new();
-    r.set_opcode_checked(opcode).unwrap();
-    r.set_rd_checked(rd.0).unwrap();
-    r.set_funct3_checked(funct3).unwrap();
-    r.set_rs1_checked(rs1.0).unwrap();
-    assert!((imm >> 11) != 0b11111 || (imm >> 11) != 0b0, "imm out of range");
-    let mut rimm = (imm & 0b11111111111) as u16;
-    rimm |= ((imm >> 15) << 15) as u16;
-    r.set_imm_checked(rimm).unwrap();
-    u32::from_le_bytes(r.into_bytes())
+    let mut r = (opcode & 0b1111111) as u32;
+    r |= ((rd.0 & 0b11111) as u32) << 7;
+    r |= ((funct3 & 0b111) as u32) << 12;
+    r |= ((rs1.0 & 0b11111) as u32) << 15;
+    r |= ((imm & 0b11111111111) as u32) << 20;
+    r |= ((imm >> 15) as u32) << 31;
+    r
 }
 
 pub fn s(
@@ -72,14 +67,13 @@ pub fn s(
     rs2: Reg,
     imm5_11: u8,
 ) -> Inst {
-    let mut r = SType::new();
-    r.set_opcode_checked(opcode).unwrap();
-    r.set_imm4_0_checked(imm0_4).unwrap();
-    r.set_funct3_checked(funct3).unwrap();
-    r.set_rs1_checked(rs1.0).unwrap();
-    r.set_rs2_checked(rs2.0).unwrap();
-    r.set_imm11_5_checked(imm5_11).unwrap();
-    u32::from_le_bytes(r.into_bytes())
+    let mut r = (opcode & 0b1111111) as u32;
+    r |= ((imm0_4 & 0b11111) as u32) << 7;
+    r |= ((funct3 & 0b111) as u32) << 12;
+    r |= ((rs1.0 & 0b11111) as u32) << 15;
+    r |= ((rs2.0 & 0b11111) as u32) << 20;
+    r |= ((imm5_11 & 0b1111111) as u32) << 25;
+    r
 }
 
 pub fn u(
@@ -87,11 +81,10 @@ pub fn u(
     rd: Reg,
     imm: u32,
 ) -> Inst {
-    let mut r = UType::new();
-    r.set_opcode_checked(opcode).unwrap();
-    r.set_rd_checked(rd.0).unwrap();
-    r.set_imm_checked(imm).unwrap();
-    u32::from_le_bytes(r.into_bytes())
+    let mut r = (opcode & 0b1111111) as u32;
+    r |= ((rd.0 & 0b11111) as u32) << 7;
+    r |= imm << 12;
+    r
 }
 
 pub fn b(
@@ -104,16 +97,9 @@ pub fn b(
     imm5_10: u8,
     imm12: u8,
 ) -> Inst {
-    let mut r = BType::new();
-    r.set_opcode_checked(opcode).unwrap();
-    r.set_imm11_checked(imm11).unwrap();
-    r.set_imm4_1_checked(imm1_4).unwrap();
-    r.set_funct3_checked(funct3).unwrap();
-    r.set_rs1_checked(rs1.0).unwrap();
-    r.set_rs2_checked(rs2.0).unwrap();
-    r.set_imm10_5_checked(imm5_10).unwrap();
-    r.set_imm12_checked(imm12).unwrap();
-    u32::from_le_bytes(r.into_bytes())
+    let imm0_4 = imm11 | (imm1_4 << 1);
+    let imm5_11 = imm5_10 | (imm12 << 6);
+    s(opcode, imm0_4, funct3, rs1, rs2, imm5_11)
 }
 
 pub fn j(
@@ -125,14 +111,11 @@ pub fn j(
     imm20: u8,
 ) -> Inst {
     // Warning: data is not filter, Pass parameters in compliance with standards
-    let mut r = JType::new();
-    r.set_opcode_checked(opcode).unwrap();
-    r.set_rd_checked(rd.0).unwrap();
-    r.set_imm19_12_checked(imm12_19).unwrap();
-    r.set_imm11_checked(imm11).unwrap();
-    r.set_imm10_1_checked(imm1_10).unwrap();
-    r.set_imm20_checked(imm20).unwrap();
-    u32::from_le_bytes(r.into_bytes())
+    let mut imm = imm12_19 as u32;
+    imm |= (imm11 as u32) << 8;
+    imm |= (imm1_10 as u32) << 9;
+    imm |= (imm20 as u32) << 19;
+    u(opcode, rd, imm)
 }
 
 /*

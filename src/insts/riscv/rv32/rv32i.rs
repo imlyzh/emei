@@ -4,6 +4,7 @@ use crate::insts::riscv::untils::*;
 
 use crate::{ld_impl, st_impl};
 
+
 pub fn lui(rd: Reg, imm: u32) -> Inst {
     u(0b0110111, rd, imm)
 }
@@ -14,6 +15,7 @@ pub fn auipc(rd: Reg, imm: u32) -> Inst {
 
 pub fn jal(rd: Reg, imm: i32) -> Inst {
     assert_eq!(imm & 0b1, 0, "jal imm must be 16-bit aligned");
+    assert!((imm >> 12) != 0b111111111111 || (imm >> 12) != 0b0, "jal imm out of range");
     dbg!(imm);
     let imm20 = ((imm >> 31) & 0b1) as u8;
     let imm12_19 = ((imm >> 12) & 0b11111111) as u8;
