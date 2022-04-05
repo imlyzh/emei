@@ -9,7 +9,6 @@ pub mod rv64;
 use registers::Reg;
 use lyuu_commons::isa::riscv::inst_binary::*;
 
-
 // pub type CInst = u16;
 pub type Inst = u32;
 

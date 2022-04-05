@@ -6,6 +6,7 @@ fn main() {
         lui(Reg::new(X1), 114514),
         addi(Reg::new(X1), Reg::new(X1), 1919),
     ];
+    // let inst_list = inst_list.map(|x| UType::from_bytes(x.to_le_bytes()).into_bytes());
     println!("lui addi: {:?}", inst_list);
 
     let inst_list = [

@@ -26,18 +26,30 @@ fn x86_64_test() {
     use crate::page_manage::PageHandle;
     use crate::page_manage::PageSize;
 
+    let r = lea(
+        false,
+        true,
+        Op1::ScaleBase(
+            TargetReg::from(Register64::Rcx as u8),
+            TargetReg::from(Register64::Rdx as u8), ScaledIndex::Id, 0),
+        TargetReg::from(Register64::Rax as u8),
+    );
+    /*
     let r = mov(
         false,
         true,
-        Op1::Direct(TargetReg::from(Register64::R8 as u8)),
-        TargetReg::from(Register64::Rdi as u8),
+        Op1::Direct(TargetReg::from(Register64::Rcx as u8)),
+        TargetReg::from(Register64::Rax as u8),
     );
+    */
+    // /*
     let r1 = mov(
         false,
         true,
         Op1::Direct(TargetReg::from(Register64::Rax as u8)),
         TargetReg::from(Register64::R8 as u8),
     );
+    //  */
     let r2 = add_imm8(
         false,
         true,
@@ -45,7 +57,11 @@ fn x86_64_test() {
         4,
     );
     let r3 = near_ret();
-    let src = [r.iter(), r1.iter(), r2.iter(), r3.iter()]
+    let src = [
+        r.iter(),
+        // r1.iter(),
+        // r2.iter(),
+        r3.iter()]
         .into_iter()
         .flatten()
         .cloned()
@@ -53,9 +69,9 @@ fn x86_64_test() {
 
     let r = PageHandle::from(PageSize::from(src.capacity()), &src);
 
-    let code: extern "C" fn(i32) -> i32 = unsafe { std::mem::transmute(r.get_ptr()) };
+    let code: extern "C" fn(u64, u64) -> u64 = unsafe { std::mem::transmute(r.get_ptr()) };
 
-    dbg!((code)(1));
+    assert_eq!((code)(1, 3), 4);
 }
 
 #[test]
