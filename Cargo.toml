@@ -18,13 +18,13 @@ path = "src/lib.rs"
 name = "page_addr"
 path = "examples/page_addr.rs"
 
-[[example]]
-name = "codegen"
-path = "examples/codegen.rs"
+# [[example]]
+# name = "codegen"
+# path = "examples/codegen.rs"
 
-[[example]]
-name = "gen_lemu_test"
-path = "examples/gen_lemu_test.rs"
+# [[example]]
+# name = "gen_lemu_test"
+# path = "examples/gen_lemu_test.rs"
 
 [dependencies]
 lazy_static = "1.4"
