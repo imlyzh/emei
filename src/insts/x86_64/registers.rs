@@ -95,9 +95,9 @@ pub static DISP32: Register32 = unsafe { std::mem::transmute_copy(&5u8) };
 
 #[inline]
 pub fn modrm(addr_mode: AddrMode, dgt_reg: Register32, src_reg: Register32) -> u8 {
-    let r = dbg!(dgt_reg as u8);
-    let r = dbg!(r + ((src_reg as u8) << 3u8));
-    let r = dbg!(r + ((addr_mode as u8) << 6u8));
+    let r = dgt_reg as u8;
+    let r = r + ((src_reg as u8) << 3u8);
+    let r = r + ((addr_mode as u8) << 6u8);
     r
 }
 
