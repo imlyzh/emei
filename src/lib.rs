@@ -31,7 +31,10 @@ fn x86_64_test() {
         true,
         Op1::ScaleBase(
             TargetReg::from(Register64::Rcx as u8),
-            TargetReg::from(Register64::Rdx as u8), ScaledIndex::Id, 0),
+            TargetReg::from(Register64::Rdx as u8),
+            ScaledIndex::Id,
+            0,
+        ),
         TargetReg::from(Register64::Rax as u8),
     );
     /*
@@ -61,11 +64,12 @@ fn x86_64_test() {
         r.iter(),
         // r1.iter(),
         // r2.iter(),
-        r3.iter()]
-        .into_iter()
-        .flatten()
-        .cloned()
-        .collect::<Vec<u8>>();
+        r3.iter(),
+    ]
+    .into_iter()
+    .flatten()
+    .cloned()
+    .collect::<Vec<u8>>();
 
     let r = PageHandle::from(PageSize::from(src.capacity()), &src);
 
@@ -77,8 +81,8 @@ fn x86_64_test() {
 #[test]
 #[cfg(target_arch = "riscv")]
 fn rv_add_test() {
-    use insts::riscv::rv32::rv32i::*;
     use insts::riscv::registers::*;
+    use insts::riscv::rv32::rv32i::*;
 
     use crate::page_manage::PageHandle;
     use crate::page_manage::PageSize;

@@ -4,7 +4,9 @@ use std::{
     ops::{AddAssign, DerefMut},
 };
 
-use crate::insts::{ImmByte, LinkError};
+use crate::insts::LinkError;
+
+use super::ImmByte;
 
 /*
 #[derive(Debug, Clone, Default)]
